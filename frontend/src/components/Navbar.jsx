@@ -73,12 +73,7 @@ const Navbar = () => {
                                     )
                                 }
                             </motion.div>
-                            <button
-                                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="lg:hidden p-2 rounded-full hover:bg-purple-100 transition"
-                            >
-                                {isMenuOpen ? <X /> : <Menu />}
-                            </button>
+                          
 
                         </>
 
@@ -95,6 +90,12 @@ const Navbar = () => {
                             </span>
                         </button>
                 }
+                  <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="lg:hidden p-2 rounded-full hover:bg-purple-100 transition"
+                            >
+                                {isMenuOpen ? <X /> : <Menu />}
+                            </button>
 
             </div>
             {isMenuOpen && (
