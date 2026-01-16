@@ -3,10 +3,10 @@ import { Cross } from 'lucide-react'
 import { assets } from '../assets/assets'
 const Footer = () => {
     return (
-        <div className='container mt-20 py-20'>
-            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-12 text-center md:text-left'>
+        <div className='container mt-30 pt-20 '>
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-16 sm:gap-12 text-center md:text-left'>
 
-                <div className='gap-6 space-y-4 '>
+                <div className='gap-6 space-y-3 '>
                     <div className='flex  gap-3 text-center items-center justify-center md:justify-start'>
                         <div className='bg-purple-700 p-2 rounded-2xl'>
                             <span className='text-2xl font-semibold flex gap-2'>
@@ -47,14 +47,14 @@ const Footer = () => {
                 <div className='space-y-4'>
                     <p className='font-bold text-xl'>Legal</p>
                     <ul className='space-y-3 text-gray-600 '>
-                        <li ><span className='cursor-pointer hover:text-black transition-colors'> Privacy</span> Policy</li>
-                        <li ><span className='cursor-pointer hover:text-black transition-colors'> Terms</span> & Conditions</li>
+                        <li ><span className='cursor-pointer hover:text-black transition-colors'> Privacy Policy</span></li>
+                        <li ><span className='cursor-pointer hover:text-black transition-colors'> Terms & Conditions</span> </li>
                     </ul>
                 </div>
             </div>
-            <hr className='border-gray-400 mt-10' />
+            <hr className='border-gray-400 mt-30 pb-2' />
 
-            <p className='text-sm text-center text-gray-600 mt-8'>
+            <p className='text-sm text-center text-gray-600 mt-18 pb-6'>
                 &copy; 2025 MediFlow.All rights Reserved.</p>
         </div>
     )

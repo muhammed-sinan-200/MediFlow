@@ -1,6 +1,6 @@
 import './App.css'
 import React from 'react'
-import  {Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Doctors from './pages/Doctors'
 import About from './pages/About'
@@ -11,25 +11,41 @@ import Login from './pages/Login'
 import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import FAQ from './pages/FAQ'
+import { ToastContainer } from 'react-toastify';
+import EmailVerify from './pages/EmailVerify'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetOtpVerify from './pages/ResetOtpVerify'
+import ResetPassword from './pages/ResetPassword'
+import ScrollToTop from './components/ScrollToTop'
+
+import GuestRoute from './guestRoute/GuestRoute'
+
 function App() {
 
   return (
     <div className='mx-4 sm:mx-[10%]'>
-      <Navbar/>
+      <ToastContainer />
+      <Navbar />
+      <ScrollToTop />
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/doctors' element={<Doctors/>}/>
-        <Route path='/doctors/:speciality' element={<Doctors/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/about' element={<About/>}/>
-        <Route path='/contact' element={<Contact/>}/>
-        <Route path='/my-profile' element={<MyProfile/>}/>
-        <Route path='/my-appointments' element={<MyAppointments/>}/> {/*list of user appointmts */}
-        <Route path='/appointments/:docId' element={<Appointment/>}/>
+        <Route path='/' element={<Home />} />
+        <Route path='/doctors' element={<Doctors />} />
+        <Route path='/doctors/:speciality' element={<Doctors />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/contact' element={<Contact />} />
+
+        <Route path='/login' element={<Login />} />
+        <Route path='/verify-email' element={<EmailVerify />} />
+
+        <Route path='/forgot-password' element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+        <Route path='/verify-reset-otp' element={<GuestRoute><ResetOtpVerify /></GuestRoute>} />
+        <Route path='/reset-password' element={<GuestRoute><ResetPassword /></GuestRoute>} />
+
+        <Route path='/my-profile' element={<MyProfile />} />
+        <Route path='/my-appointments' element={<MyAppointments />} />
+        <Route path='/appointments/:docId' element={<Appointment />} />
       </Routes>
-      {/* <Footer/> */}
-      {/* <FAQ/> */}
+      <Footer />
     </div>
   )
 }

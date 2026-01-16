@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext';
+import { motion, AnimatePresence } from "framer-motion";
 
 const Doctors = () => {
   const { speciality } = useParams();
@@ -12,18 +13,10 @@ const Doctors = () => {
 
   const { doctors } = useContext(AppContext)
 
-
-  // const applyFilter = () => {
-  //   if (selectedSpeciality === "") {
-  //     setFilterDoctor(doctors)
-  //   } else {
-  //     setFilterDoctor(doctors.filter(doc => doc.speciality === selectedSpeciality))
-  //   }
-  // }
   const applyFilter = () => {
     setFilterDoctor(
       doctors.filter(doc =>
-        (selectedSpeciality === "" || doc.speciality === selectedSpeciality) &&
+        (selectedSpeciality === "" || doc.speciality.toLowerCase() === selectedSpeciality.toLowerCase()) &&
         (searchDoc.trim() === "" ||
           doc.name.toLowerCase().includes(searchDoc.toLowerCase()) ||
           doc.speciality.toLowerCase().includes(searchDoc.toLowerCase())
@@ -31,7 +24,6 @@ const Doctors = () => {
       )
     );
   }
-  //here 
 
 
   useEffect(() => {
@@ -48,10 +40,16 @@ const Doctors = () => {
   }, [speciality])
 
 
+
+
+
   return (
     <div className='pb-20'>
       {/* seacrh bar */}
-      <div className='flex flex-col md:flex-row gap-4 bg-stone-50 py-6 px-2 rounded-2xl'>
+      <motion.div initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className='flex flex-col md:flex-row gap-4 bg-stone-50 py-6 px-2 rounded-2xl'>
         <input
           type='text'
           placeholder='Search by doctor or speciality'
@@ -83,7 +81,7 @@ const Doctors = () => {
           <option className='bg-purple-200 text-purple-900' value="Gastroenterologist">Gastroenterologist</option>
 
         </select>
-      </div>
+      </motion.div>
 
       {/* doct lsit */}
       <div className='w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-6'>
@@ -97,8 +95,8 @@ const Doctors = () => {
             >
               <img src={item.image} alt="" className='group-hover:bg-purple-100' />
               <div className='p-4'>
-                <div className='flex items-center text-center gap-2 text-green-300 text-sm'>
-                  <p className='rounded-full bg-green-300 w-2 h-2'></p><p>Available</p>
+                <div className={`flex items-center text-center gap-2 ${item.available ? 'text-green-300' : 'text-gray-300'}  text-sm`}>
+                  <p className={`rounded-full ${item.available ? 'bg-green-300' : 'bg-gray-300'}  w-2 h-2`}></p><p>{item.available ? "Available" : "Not Available"}</p>
                 </div>
                 <p className='text-purple-950 text-lg font-medium'>{item.name}</p>
                 <p className='text-purple-500 text-sm font-semibold'>{item.speciality}</p>

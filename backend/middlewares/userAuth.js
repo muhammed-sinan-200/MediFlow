@@ -1,0 +1,26 @@
+import jwt from 'jsonwebtoken'
+
+
+const userAuth = async (req, res, next) => {
+    try {
+
+        const { token } = req.headers
+        if (!token) {
+            return res.json({ status: false, message: "NOt authorized, login again!" })
+        }
+        const token_decode = jwt.verify(token, process.env.JWT_SECRET_KEY)
+
+        req.userId = token_decode.id
+        
+        next()
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            status: false,
+            message: error.message
+        })
+
+    }
+}
+
+export default userAuth;

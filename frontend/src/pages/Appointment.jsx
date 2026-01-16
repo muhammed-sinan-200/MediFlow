@@ -1,14 +1,17 @@
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { BadgeCheck, Info } from 'lucide-react'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const Appointment = () => {
   const { docId } = useParams()
-  const { doctors } = useContext(AppContext)
+  const { doctors, backendUrl, token, getDoctorsData } = useContext(AppContext)
 
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
+  const navigate = useNavigate()
   const [docDetails, setDocDetails] = useState(null)
   const [docSlots, setDocSlots] = useState([])
   const [slotIndex, setSlotIndex] = useState(0)
@@ -46,16 +49,61 @@ const Appointment = () => {
       while (currentDate < endTime) {
         let formattedTime = currentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
 
-        timeSlots.push({
-          datetime: new Date(currentDate),
-          time: formattedTime
-        })
+        let day = currentDate.getDate()
+        let month = currentDate.getMonth() + 1
+        let year = currentDate.getFullYear()
 
+        const slotDate = day + "_" + month + "_" + year
+        const slotTime = formattedTime
+
+        const isSlotAvailable = docDetails.slots_booked[slotDate] && docDetails.slots_booked[slotDate].includes(slotTime) ? false : true
+        
+        if (isSlotAvailable) {
+          timeSlots.push({
+            datetime: new Date(currentDate),
+            time: formattedTime
+          })
+        }
+
+ 
         currentDate.setMinutes(currentDate.getMinutes() + 30)
       }
       setDocSlots(prev => ([...prev, timeSlots]))
     }
   }
+
+
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warn('Login to book appointment')
+      return navigate('/login')
+    }
+
+    try {
+      const date = docSlots[slotIndex][0].datetime
+
+      let day = date.getDate()
+      let month = date.getMonth() + 1
+      let year = date.getFullYear()
+
+      const slotDate = day + "_" + month + "_" + year
+
+      const { data } = await axios.post(backendUrl + '/api/user/book-appointment', { docId, slotDate, slotTime }, { headers: { token } })
+      if (data.success) {
+        toast.success(data.message)
+        getDoctorsData()
+        navigate('/my-appointments')
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message)
+
+    }
+  }
+
+
 
   useEffect(() => {
     fetchDetails()
@@ -122,7 +170,7 @@ const Appointment = () => {
             </p>
           ))}
         </div>
-        <button className='border border-green-500 px-10 py-3 hover:bg-purple-50 hover:border-green-700 text-sm my-6 rounded-full cursor-pointer '>
+        <button onClick={bookAppointment} className='border border-green-500 px-10 py-3 hover:bg-purple-50 hover:border-green-700 text-sm my-6 rounded-full cursor-pointer '>
           Book Appointment
         </button>
       </div>
