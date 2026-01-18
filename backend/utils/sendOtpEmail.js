@@ -30,7 +30,8 @@ const sendOtpEmail = async (to, Otp, purpose = "verification") => {
         return true;
     } catch (error) {
         console.error("Failed to send email:", error);
-        throw new Error("Otp email sending failed");
+        // throw new Error("Otp email sending failed");
+        throw new Error(error.message);
     }
 }
 
