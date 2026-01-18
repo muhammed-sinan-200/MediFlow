@@ -29,9 +29,9 @@ const sendOtpEmail = async (to, Otp, purpose = "verification") => {
         await transporter.sendMail(mailOptions);
         return true;
     } catch (error) {
-        console.error("Failed to send email:", error);
-        // throw new Error("Otp email sending failed");
-        throw new Error(error.message);
+        console.error("Nodemailer error message:", error.message);
+        console.error("Full error:", error);
+        throw error; // don't hide it
     }
 }
 
