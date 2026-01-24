@@ -26,7 +26,7 @@ app.use('/api/user',userRouter)
 
 
 app.get('/',(req,res)=>{
-    res.send("Working aan")
+    res.send("Working aan") 
 })
 
 app.listen(port,()=>console.log(`Server running on ${port}`)
