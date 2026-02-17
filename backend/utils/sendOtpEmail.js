@@ -1,64 +1,56 @@
+// utils/sendOtpEmail.js
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
+dotenv.config(); // load environment variables
+
+// create transporter
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587, // use 465 if secure: true
+  secure: false, // true for 465, false for 587
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+// verify transporter
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("SMTP Connection Error:", err);
+  } else {
+    console.log("SMTP Server is ready to send emails");
+  }
+});
+
+// send OTP email function
 const sendOtpEmail = async (to, otp, purpose = "verification") => {
   try {
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true, 
-      auth: {
-        user: process.env.EMAIL,            
-        pass: process.env.EMAIL_PASSWORD 
-      },
-    });
-
-    // Verify transporter connection
-    await new Promise((resolve, reject) => {
-      transporter.verify((error, success) => {
-        if (error) {
-          console.error("Transporter verify failed:", error);
-          reject(error);
-        } else {
-          console.log("Transporter ready:", success);
-          resolve(success);
-        }
-      });
-    });
-
     const subject =
-      purpose === "reset" ? "Password reset OTP" : "Email verification OTP";
+      purpose === "reset" ? "Password Reset OTP" : "Email Verification OTP";
 
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to,
+    const html = `
+      <div style="font-family: sans-serif; padding: 10px;">
+        <h2>${subject}</h2>
+        <p>Your One Time Password (OTP) is:</p>
+        <h1 style="color: purple;">${otp}</h1>
+        <p>This OTP is valid for <b>10 minutes</b>.</p>
+      </div>
+    `;
+
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL, // sender email
+      to, // recipient email
       subject,
-      html: `
-        <div>
-          <h2>${subject}</h2>
-          <p>Your One Time Password is:</p>
-          <h1>${otp}</h1>
-          <p>This OTP is valid for <b>10 minutes</b>.</p>
-        </div>
-      `,
-    };
-
-    // Send email
-    await new Promise((resolve, reject) => {
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-          console.error("SendMail error:", err);
-          reject(err);
-        } else {
-          console.log("Email sent:", info.response);
-          resolve(info);
-        }
-      });
+      html,
     });
 
+    console.log(`OTP email sent to ${to}`);
+    console.log("Message ID:", info.messageId);
     return true;
   } catch (error) {
-    console.error("sendOtpEmail error:", error);
+    console.error("Error sending email:", error);
     throw error;
   }
 };
