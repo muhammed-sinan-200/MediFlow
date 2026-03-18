@@ -1,36 +1,22 @@
-// utils/sendOtpEmail.js
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 import dotenv from "dotenv";
 
-dotenv.config(); // load environment variables
+dotenv.config();
 
-// create transporter
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587, // use 465 if secure: true
-  secure: false, // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const client = SibApiV3Sdk.ApiClient.instance;
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
 
-// verify transporter
-transporter.verify((err, success) => {
-  if (err) {
-    console.error("SMTP Connection Error:", err);
-  } else {
-    console.log("SMTP Server is ready to send emails");
-  }
-});
+const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
-// send OTP email function
 const sendOtpEmail = async (to, otp, purpose = "verification") => {
   try {
     const subject =
-      purpose === "reset" ? "Password Reset OTP" : "Email Verification OTP";
+      purpose === "reset"
+        ? "Password Reset OTP"
+        : "Email Verification OTP";
 
-    const html = `
+    const htmlContent = `
       <div style="font-family: sans-serif; padding: 10px;">
         <h2>${subject}</h2>
         <p>Your One Time Password (OTP) is:</p>
@@ -39,18 +25,20 @@ const sendOtpEmail = async (to, otp, purpose = "verification") => {
       </div>
     `;
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL, // sender email
-      to, // recipient email
+    await emailApi.sendTransacEmail({
+      sender: {
+        email: process.env.SENDER_EMAIL,
+        name: process.env.SENDER_NAME,
+      },
+      to: [{ email: to }],
       subject,
-      html,
+      htmlContent,
     });
 
     console.log(`OTP email sent to ${to}`);
-    console.log("Message ID:", info.messageId);
     return true;
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending OTP email:", error.response?.body || error);
     throw error;
   }
 };
