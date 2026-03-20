@@ -9,51 +9,67 @@ const Header = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       style={{
-        background: 'linear-gradient(45deg, #5B21B6 0%, #552586 50%, #FFFFFF 100%)'
+        background: 'linear-gradient(180deg, #5B21B6 0%, #552586 50%, #FFFFFF 100%)'
       }}
-
-      className='flex flex-col md:flex-row flex-wrap  rounded-xl px-6 md:px-10 lg:px-20'
+      className='flex flex-col md:flex-row rounded-xl px-4 sm:px-6 md:px-10 lg:px-20 overflow-hidden'
     >
-      {/* left side */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
-        className='md:w-1/2 flex flex-col items-start justify-center gap-3 py-10 m-auto md:py-[10vw] md:-mb-7.5'
+        className='md:w-1/2 flex flex-col items-start justify-center gap-5 py-8 sm:py-10 md:py-[10vw] md:-mb-7.5'
       >
-        <p className='text-3xl md:text-4xl lg:text-5xl text-white font-semibold leading-tight md:leading-tight lg:leading-tight'>
-          Care you can trust
-        </p>
+        <div className='flex flex-col gap-2 text-left'>
+          <h1 className='text-3xl sm:text-4xl text-white font-semibold leading-tight'>
+            CARE YOU CAN TRUST
+          </h1>
 
-        <div className='flex flex-col md:flex-row items-center gap-3 text-white text-sm font-light'>
-          <img className='w-26' src={assets.group_profiles} alt="" />
-          <p>Book your appointment easily and connect with our trusted doctors.</p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className='text-lg sm:text-xl md:text-2xl text-purple-100 font-medium leading-snug'
+          >
+            Your perfect health partner
+          </motion.p>
         </div>
 
-        <div>
+        <div className='flex items-start sm:items-center gap-3 text-white text-sm sm:text-base font-light text-left max-w-md'>
+          <img
+            className='w-16 sm:w-20 md:w-26 flex-shrink-0'
+            src={assets.group_profiles}
+            alt="Trusted doctors"
+          />
+          <p className='leading-6'>
+            Book your appointment easily and connect with our trusted doctors.
+          </p>
+        </div>
+
+        <div className='w-full sm:w-auto'>
           <a
-            className='flex items-center gap-3 bg-white px-8 py-5 rounded-full 
-          font-medium hover:scale-105 transition-all duration-200 m-auto md:m-0 group'
             href="#speciality"
+            className='inline-flex items-center justify-center gap-3 bg-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:scale-105 transition-all duration-200 group text-sm sm:text-base'
           >
             Book Appointment
-            <img className='w-4 group-hover:text-purple-700' src={assets.arrow_icon} alt="" />
+            <img
+              className='w-4'
+              src={assets.arrow_icon}
+              alt="Arrow icon"
+            />
           </a>
         </div>
-
       </motion.div>
 
-      {/* right side */}
       <motion.div
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
-        className='md:w-1/2 relative'
+        className='md:w-1/2 relative flex justify-center items-end mt-2 md:mt-0'
       >
         <img
-          className='w-full md:absolute bottom-0 h-auto rounded-lg'
+          className='w-full max-w-[320px] sm:max-w-[420px] md:max-w-full h-auto object-contain md:absolute md:bottom-0 rounded-lg'
           src={assets.banner1}
-          alt=""
+          alt="Header banner"
         />
       </motion.div>
     </motion.div>

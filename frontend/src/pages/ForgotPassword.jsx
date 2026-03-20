@@ -42,28 +42,41 @@ const ForgotPassword = () => {
   }, [])
 
   return (
-    <div className="flex justify-center items-center min-h-screen sm:bg-gradient-to-tr from-pink-200 via-purple-400 to-purple-600">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border border-purple-400 shadow-2xl w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-purple-700 mb-4">Forgot Password</h2>
-        <p className="text-purple-700 font-base my-2">We’ll send a one-time password (OTP) to your registered email.</p>
-        <div className="relative mb-4">
-          <Mail className="absolute left-3 top-3 text-gray-300" />
+    <div className="min-h-screen flex items-center justify-center px-4">
+
+      <form 
+        onSubmit={handleSubmit} 
+        className="bg-white p-10 w-full max-w-md border border-purple-100"
+      >
+        <h2 className="text-3xl font-semibold text-purple-700 mb-2">
+          Forgot Password
+        </h2>
+
+        <p className="text-gray-500 mb-6">
+          Enter your email and we’ll send you an OTP to reset your password.
+        </p>
+
+        <div className="relative mb-5">
+          <Mail className="absolute left-3 top-3 text-gray-400" />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="w-full border rounded-md py-2 pl-10 pr-3 outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full border border-gray-300 rounded-md py-2.5 pl-10 pr-3 outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
           />
         </div>
+
         <button
           type="submit"
-          className="w-full py-2 bg-purple-700 text-white rounded-md hover:bg-purple-800 transition"
+          className="w-full py-2.5 bg-purple-700 text-white rounded-md hover:bg-purple-800 transition disabled:opacity-70"
           disabled={loading}
         >
           {loading ? "Sending OTP..." : "Send OTP"}
         </button>
+
       </form>
+
     </div>
   );
 };

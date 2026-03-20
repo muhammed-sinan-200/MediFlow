@@ -29,11 +29,11 @@ const Contact = () => {
             We’re here to help you with appointments and enquiries.
           </p>
           <div>
-            <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-5 px-6 py-10 rounded-lg shadow-xl bg-purple-50 space-y-8'>
+            <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-5 px-6 py-10 rounded-lg shadow bg-purple-50 space-y-8'>
               <div>
                 <input
                   type="text"
-                  placeholder='Your name'
+                  placeholder='Enter your name'
                   {...register("name", {
                     required: "Name is required",
                     minLength: {
@@ -52,7 +52,7 @@ const Contact = () => {
               <div>
                 <input
                   type="email"
-                  placeholder='Your email'
+                  placeholder='Enter your email'
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -70,7 +70,7 @@ const Contact = () => {
 
               <div>
                 <textarea
-                  placeholder='Your message...'
+                  placeholder='Enter your message...'
                   {...register("message", {
                     required: "Message is required",
                     minLength: {

@@ -21,14 +21,14 @@ const TopDoctorsList = () => {
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className='text-2xl font-semibold text-transparent bg-clip-text bg-linear-to-r
-            from-purple-800 to-indigo-600 sm:text-4xl'>
+            from-purple-800 to-indigo-600 sm:text-4xl text-center'>
                 Expert Care. Trusted Doctors. Exceptional Outcomes.
             </motion.h1>
             <motion.p initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className='text-gray-600 font-base text-md'>
+                className='text-gray-600 font-base text-md text-center'>
                 Choose your doctor and book consultations with experienced specialists dedicated to your well-being.
             </motion.p>
             <div className='w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-6'>
@@ -56,7 +56,7 @@ const TopDoctorsList = () => {
                 className='
                     relative overflow-hidden
                     border p-2 mt-8 
-                  border-purple-500 rounded-full cursor-pointer text-purple-600  
+                  border-purple-500 rounded cursor-pointer text-purple-600  
                     before:absolute before:inset-0 before:bg-purple-950 transition-colors
                     before:scale-x-0 before:origin-left before:transition-transform 
                     hover:before:scale-x-100 before:duration-300 hover:text-purple-100'

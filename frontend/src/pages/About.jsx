@@ -46,7 +46,7 @@ const About = () => {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}
-          className='text-lg font-base text-gray-600 mt-3'>Accessing healthcare can be confusing and time-consuming.
+          className='text-lg font-base text-gray-600 mt-3 text-justify'>Accessing healthcare can be confusing and time-consuming.
           Mediflow simplifies the experience through a connected and reliable platform.
           Too many steps and too little clarity define modern healthcare.
           Mediflow simplifies the journey with organized, dependable care.</motion.p>
@@ -68,7 +68,7 @@ const About = () => {
           <motion.div
             initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0 }}
             viewport={{ once: true }}
             className='border p-5 rounded-2xl'>
             <img src={assets.Hospital_building} alt="" className='mb-4' />
@@ -79,7 +79,7 @@ const About = () => {
           <motion.div
             initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.1}}
             viewport={{ once: true }}
             className='border p-5 rounded-2xl'>
             <img src={assets.Hospital_bed} alt="" className='mb-4' />
@@ -90,7 +90,7 @@ const About = () => {
           <motion.div
             initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
+            transition={{ duration: 0.5, delay:0.2 }}
             viewport={{ once: true }}
             className='border p-5 rounded-2xl'>
             <img src={assets.CT_scan} alt="" className='mb-4' />
@@ -101,7 +101,7 @@ const About = () => {
           <motion.div
             initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 1.5 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             viewport={{ once: true }}
             className='border p-5 rounded-2xl'>
             <img src={assets.Ambulance} alt="" className='mb-4' />
@@ -133,8 +133,8 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="text-gray-600 leading-relaxed">
-            Mediflow is designed around how doctors, nurses, and medical staff actually work —
+            className="text-gray-600 leading-relaxed text-justify">
+            Mediflow is designed around how doctors, nurses, and medical staff actually work
             helping them focus on care rather than coordination.
           </motion.p>
         </div>
@@ -144,31 +144,31 @@ const About = () => {
       {/* 5 */}
 
       <section
-        className='grid grid-cols-2 items-center'>
-        <div className='py-5 px-6'>
+        className='grid grid-cols-1 md:grid-cols-2 items-center'>
+        <div>
           <motion.h3 initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             viewport={{ once: true }}
             className='text-2xl text-purple-900 font-medium mb-4'>Be a part of our team by donating
             <span className='animate-pulse ml-2 px-1.5 border border-purple-800 text-sm font-bold text-purple-800 bg-purple-100 rounded-full'>new</span>
           </motion.h3>
           <motion.p initial={{ opacity: 0, x: 60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             viewport={{ once: true }} className='text-gray-600 leading-relaxed'> Every drop counts. Join our blood donation program to help patients in need and contribute
             to saving lives in your community.</motion.p>
           <motion.button initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
             viewport={{ once: true }}
             className='px-3 py-1.5 border border-purple-700 mt-4 rounded cursor-pointer
             hover:bg-purple-900 hover:text-white'>Donate</motion.button>
         </div>
         <motion.img initial={{ opacity: 0, x: 60 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true }} src={assets.Blood_donation} alt="" />
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={{ once: true }} src={assets.Blood_donation}/>
       </section>
 
 
@@ -203,7 +203,7 @@ const About = () => {
           />
           <motion.p initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1, ease: "easeOut" }}
+            transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}
             viewport={{ once: true }}
             className='  absolute top-1/2 left-1/2 
                           -translate-x-1/2 -translate-y-1/2

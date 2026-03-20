@@ -23,6 +23,7 @@ import GuestRoute from './guestRoute/GuestRoute'
 function App() {
 
   return (
+    <>
     <div className='mx-4 sm:mx-[10%]'>
       <ToastContainer />
       <Navbar />
@@ -45,8 +46,9 @@ function App() {
         <Route path='/my-appointments' element={<MyAppointments />} />
         <Route path='/appointments/:docId' element={<Appointment />} />
       </Routes>
-      <Footer />
     </div>
+      <Footer />
+    </>
   )
 }
 

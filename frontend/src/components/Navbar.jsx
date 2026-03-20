@@ -23,13 +23,14 @@ const Navbar = () => {
 
     return (
         <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 150, damping: 20 }}
-            className=' flex justify-between items-center text-sm p-4 border-0 rounded-4xl mb-5 bg-transparent relative z-50'>
+            className='flex justify-between items-center text-sm p-4 border-0 rounded-4xl mb-5 bg-transparent relative z-50'>
             <NavLink to='/' className='flex gap-2 group justify-between items-center'>
                 <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 400 }}
                     className='bg-purple-700 p-2 rounded-2xl'
                 >
+                    
                     <span className='text-2xl font-semibold flex gap-2'>
                         <Cross className='text-white' />
                     </span>
