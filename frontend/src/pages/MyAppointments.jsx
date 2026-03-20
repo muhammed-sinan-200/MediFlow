@@ -5,7 +5,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { Check, X } from 'lucide-react'
+import { CalendarCheck, CalendarCheck2, Check, X } from 'lucide-react'
 import { motion, spring } from 'framer-motion'
 
 
@@ -94,49 +94,100 @@ const MyAppointments = () => {
       getUserAppointments()
     }
   }, [token])
-  return (
-    <motion.div initial={{ x: -80, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className=' bg-white/60 backdrop-blur-md 
-                rounded-2xl p-8 shadow-md 
-                flex flex-col  gap-6 text-sm'>
-      <p className='sm:md text-xl border-b bg-gradient-to-r 
-              from-purple-600 to-purple-900 
-              bg-clip-text text-transparent font-medium pb-3 mt-12'>
-        My Appointments
-      </p>
+ return (
+  <motion.div
+    initial={{ x: -80, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    transition={{ duration: 0.6, ease: 'easeOut' }}
+    className='bg-white/60 backdrop-blur-md rounded-2xl p-8 shadow-xs flex flex-col gap-6'
+  >
+    <p className='text-xl border-b bg-gradient-to-r from-purple-600 to-purple-900 bg-clip-text text-transparent font-medium pb-3 mt-12'>
+      My Appointments
+    </p>
+
+    {appointments.length === 0 ? (
+      <div className='flex flex-col items-center justify-center text-center py-16'>
+        <div className='w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center mb-4'>
+          <span className='text-3xl'><CalendarCheck2/></span>
+        </div>
+        <h2 className='text-xl font-semibold text-gray-800'>No appointments yet</h2>
+        <p className='text-gray-500 mt-2 max-w-sm'>
+          You haven’t booked any appointments yet. Start by choosing a doctor and booking your first appointment.
+        </p>
+        <button
+          onClick={() => navigate('/doctors')}
+          className='mt-6 bg-purple-700 text-white px-6 py-2.5 rounded-full hover:bg-purple-900 transition-all duration-200 cursor-pointer'
+        >
+          Book Appointment
+        </button>
+      </div>
+    ) : (
       <div>
         {appointments.map((item, index) => (
-          <div className='grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b border-b-gray-200' key={index}>
+          <div
+            className='grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b border-b-gray-200'
+            key={index}
+          >
             <div>
-              <img className='w-32 bg-purple-200' src={item.docData.image} alt="" />
+              <img className='w-32 h-32 object-cover rounded-xl bg-purple-200' src={item.docData.image} alt="" />
             </div>
+
             <div className='flex-1'>
               <p className='font-semibold text-gray-800'>{item.docData.name}</p>
               <p className='text-gray-500 font-medium text-sm'>{item.docData.speciality}</p>
               <p className='text-gray-600 font-semibold text-sm mt-2'>Address:</p>
               <p className='text-xs text-gray-600'>{item.docData.address.line1}</p>
               <p className='text-xs text-gray-600'>{item.docData.address.line2}</p>
-              <p className='font-light'><span className='font-medium'>Date & Time:</span> {slotDateFormat(item.slotDate)} | {item.slotTime}</p>
+              <p className='font-light'>
+                <span className='font-medium'>Date & Time:</span> {slotDateFormat(item.slotDate)} | {item.slotTime}
+              </p>
             </div>
-            <div></div>
-            <div className='flex flex-col gap-2 justify-end'>
-              {!item.cancelled && item.payment && !item.isComplete && <button className='sm:min-w-44 py-2 px-6 rounded text-center text-sm  bg-stone-100 text-purple-500 cursor-not-allowed'>Paid</button>}
-              {!item.cancelled && !item.payment && !item.isComplete && <button onClick={() => appointmentRazorpay(item._id)} className='bg-purple-700 text-center text-white border px-4 py-1 cursor-pointer sm:min-w-48 rounded hover:bg-purple-900  transition-all duration-200'>Pay Online</button>}
-              {!item.cancelled && !item.isComplete && !item.payment && <button onClick={() => canceAppointment(item._id)} className='text-center text-purple-500 border px-4 py-1 cursor-pointer sm:min-w-48 rounded hover:bg-red-700 hover:text-white  transition-all duration-200'>Cancel Appointment</button>}
-              {item.cancelled && !item.isComplete && <button className='sm:m-w-48 py-2 px-2 border border-red-500 rounded text-red-500 flex items-center justify-center gap-2'>Appointment cancelled <X size={18} /></button>}
 
-              {
-                item.isComplete && <button className='sm:min-w-48 py-2 border border-green-300 rounded 
-                    text-green-600 flex items-center justify-center gap-2'>Completed <Check size={18} /></button>
-              }
+            <div></div>
+
+            <div className='flex flex-col gap-2 justify-end'>
+              {!item.cancelled && item.payment && !item.isComplete && (
+                <button className='sm:min-w-44 py-2 px-6 rounded text-center text-sm bg-stone-100 text-purple-500 cursor-not-allowed'>
+                  Paid
+                </button>
+              )}
+
+              {!item.cancelled && !item.payment && !item.isComplete && (
+                <button
+                  onClick={() => appointmentRazorpay(item._id)}
+                  className='bg-purple-700 text-center text-white border px-4 py-1 cursor-pointer sm:min-w-48 rounded hover:bg-purple-900 transition-all duration-200'
+                >
+                  Pay Online
+                </button>
+              )}
+
+              {!item.cancelled && !item.isComplete && !item.payment && (
+                <button
+                  onClick={() => canceAppointment(item._id)}
+                  className='text-center text-purple-500 border px-4 py-1 cursor-pointer sm:min-w-48 rounded hover:bg-red-700 hover:text-white transition-all duration-200'
+                >
+                  Cancel Appointment
+                </button>
+              )}
+
+              {item.cancelled && !item.isComplete && (
+                <button className='sm:m-w-48 py-2 px-2 border border-red-500 rounded text-red-500 flex items-center justify-center gap-2'>
+                  Appointment cancelled <X size={18} />
+                </button>
+              )}
+
+              {item.isComplete && (
+                <button className='sm:min-w-48 py-2 border border-green-300 rounded text-green-600 flex items-center justify-center gap-2'>
+                  Completed <Check size={18} />
+                </button>
+              )}
             </div>
           </div>
         ))}
       </div>
-    </motion.div>
-  )
+    )}
+  </motion.div>
+)
 }
 
 export default MyAppointments

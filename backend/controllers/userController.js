@@ -420,6 +420,9 @@ const bookAppointment = async (req, res) => {
     try {
         const userId = req.userId
         const { docId, slotDate, slotTime } = req.body
+        if (!docId || !slotDate || !slotTime) {
+            return res.json({ success: false, message: "Please select a date and time slot" })
+        }
         const docData = await doctorModel.findById(docId).select('-password')
 
         if (!docData.available) {
