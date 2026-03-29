@@ -1,60 +1,76 @@
-import React, { useContext } from 'react'
-import {  Navigate } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
-import { ToastContainer } from 'react-toastify';
-import { AdminContext } from './context/AdminContext';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-import { Routes,Route } from 'react-router-dom';
-import Dashboard from './pages/Admin/Dashboard';
-import AllAppointments from './pages/Admin/AllAppointments';
-import AddDoctor from './pages/Admin/AddDoctor';
-import DoctorsList from './pages/Admin/DoctorsList';
-import { DoctorContext } from './context/DoctorContext';
-import DoctorDashboard from './pages/Doctor/DoctorDashboard';
-import DoctorAppointment from './pages/Doctor/DoctorAppointment';
-import DoctorProfile from './pages/Doctor/DoctorProfile';
+import { ToastContainer } from 'react-toastify'
+import { AdminContext } from './context/AdminContext'
+import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
+import Dashboard from './pages/Admin/Dashboard'
+import AllAppointments from './pages/Admin/AllAppointments'
+import AddDoctor from './pages/Admin/AddDoctor'
+import DoctorsList from './pages/Admin/DoctorsList'
+import { DoctorContext } from './context/DoctorContext'
+import DoctorDashboard from './pages/Doctor/DoctorDashboard'
+import DoctorAppointment from './pages/Doctor/DoctorAppointment'
+import DoctorProfile from './pages/Doctor/DoctorProfile'
 
 const App = () => {
-  const {aToken} = useContext(AdminContext)
-  const {dToken} = useContext(DoctorContext)
+  const { aToken } = useContext(AdminContext)
+  const { dToken } = useContext(DoctorContext)
 
-  
-  return aToken || dToken? (
-    <div className='bg-purple-50'>
-      <ToastContainer/>
-      <Navbar/>
-      <div className='flex items-start'>
-        <Sidebar/>
-        <Routes>
-          <Route path="/" element={aToken ? 
-          <Navigate to="/admin-dashboard" replace /> 
-          : 
-          dToken ? 
-          <Navigate to="/doctor-dashboard" replace /> 
-          : 
-          <Navigate to="/login" replace />
-  }
-/>
-          {/* admin routes */}
-          <Route path='/' element={<></>}/>
-          <Route path='/admin-dashboard' element={<Dashboard/>}/>
-          <Route path='/all-appointments' element={<AllAppointments/>}/>
-          <Route path='/add-doctor' element={<AddDoctor/>}/>
-          <Route path='/doctor-list' element={<DoctorsList/>}/>
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
-          {/* doctor routes */}
-          <Route path='/doctor-dashboard' element={<DoctorDashboard/>}/>
-          <Route path='/doctor-appointments' element={<DoctorAppointment/>}/>
-          <Route path='/doctor-profile' element={<DoctorProfile/>}/>
-        </Routes>
+  return aToken || dToken ? (
+    <div className='min-h-screen bg-purple-50'>
+      <ToastContainer />
+
+      <Navbar
+        mobileSidebarOpen={mobileSidebarOpen}
+        setMobileSidebarOpen={setMobileSidebarOpen}
+      />
+
+      <div className='flex'>
+        <Sidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          mobileSidebarOpen={mobileSidebarOpen}
+          setMobileSidebarOpen={setMobileSidebarOpen}
+        />
+
+        <main
+          className={`flex-1 min-w-0 transition-all duration-300 ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'
+            }`}
+        >          <Routes>
+            <Route
+              path="/"
+              element={
+                aToken ? (
+                  <Navigate to="/admin-dashboard" replace />
+                ) : dToken ? (
+                  <Navigate to="/doctor-dashboard" replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
+            <Route path='/admin-dashboard' element={<Dashboard />} />
+            <Route path='/all-appointments' element={<AllAppointments />} />
+            <Route path='/add-doctor' element={<AddDoctor />} />
+            <Route path='/doctor-list' element={<DoctorsList />} />
+
+            <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
+            <Route path='/doctor-appointments' element={<DoctorAppointment />} />
+            <Route path='/doctor-profile' element={<DoctorProfile />} />
+          </Routes>
+        </main>
       </div>
     </div>
   ) : (
     <>
-    
-    <Login />
-    <ToastContainer/>
+      <Login />
+      <ToastContainer />
     </>
   )
 }

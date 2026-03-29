@@ -1,40 +1,41 @@
 import React, { useContext } from 'react'
-import { assets } from '../assets/assets.js'
-import { Cross } from 'lucide-react'
+import { Cross, Menu } from 'lucide-react'
 import { AdminContext } from '../context/AdminContext.jsx'
-import { useNavigate } from 'react-router-dom'
 import { DoctorContext } from '../context/DoctorContext.jsx'
-const Navbar = () => {
 
-    const { aToken, setAToken } = useContext(AdminContext)
-    const { dToken, setDToken } = useContext(DoctorContext)
+const Navbar = ({
+  mobileSidebarOpen,
+  setMobileSidebarOpen,
+}) => {
+  const { aToken } = useContext(AdminContext)
+  const { dToken } = useContext(DoctorContext)
 
+  return (
+    <div className='sticky top-0 z-40 h-16 flex justify-between items-center px-4 sm:px-6 md:px-8 border-b border-purple-200 shadow-sm shadow-purple-100 bg-white'>
+      <div className='flex items-center gap-3 min-w-0'>
+        <button
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          className='lg:hidden p-2 rounded-xl border border-purple-200 text-purple-800 hover:bg-purple-50 transition'
+        >
+          <Menu size={20} />
+        </button>
 
-    const navigate = useNavigate()
-    const logout = () => {
-        navigate('/')
-        aToken && setAToken('')
-        aToken && sessionStorage.removeItem('aToken')
-        dToken && setDToken('')
-        dToken && sessionStorage.removeItem('dToken')
-    }
-
-    return (
-        <div className='flex justify-between items-center px-4 sm:px-10 py-3 border-b border-purple-200 shadow-sm shadow-purple-100 bg-white'>
-            <div className='flex items-center gap-2 text-sm'>
-                <div className='bg-purple-700 p-2 rounded-2xl w-fit'>
-                    <span className='text-2xl font-semibold flex gap-2'>
-                        <Cross className='text-white' />
-                    </span>
-                </div><p className='text-2xl font-semibold'>MediFlow</p>
-
-                <p className='font-medium text-gray-800 border px-2.5 py-0.5 rounded-full border-purple-500 animate-pulse shadow-md shadow-purple-300'>{aToken ? "Admin Panel" : "Doctor Panel"}</p>
-            </div>
-            <button onClick={logout} className='sm:text-sm md:text-base  px-6 py-2.5 bg-purple-900 md:px-8 md:py-3 
-            rounded-full  text-white font-medium hover:bg-white  border-purple-900 hover:border-purple-700 
-          hover:text-purple-900 hover:shadow-md transition-all duration-200 ease-out cursor-pointer border '>Logout</button>
+        <div className='bg-purple-700 p-2 rounded-2xl w-fit shrink-0'>
+          <span className='text-2xl font-semibold flex gap-2'>
+            <Cross className='text-white' />
+          </span>
         </div>
-    )
+
+        <div className='flex items-center gap-2 min-w-0'>
+          <p className='text-lg sm:text-2xl font-semibold truncate'>MediFlow</p>
+
+          <p className='hidden sm:block font-medium text-gray-800 border px-2.5 py-0.5 rounded-full border-purple-500 animate-pulse shadow-md shadow-purple-300 whitespace-nowrap'>
+            {aToken ? 'Admin Panel' : dToken ? 'Doctor Panel' : ''}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Navbar

@@ -1,60 +1,193 @@
 import React, { useContext } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { AdminContext } from '../context/AdminContext'
-import { NavLink } from 'react-router-dom'
-import { assets } from '../assets/assets'
 import { DoctorContext } from '../context/DoctorContext'
-import { House, CalendarDays, SquarePlus, Users } from 'lucide-react'
+import {
+  House,
+  CalendarDays,
+  SquarePlus,
+  Users,
+  X,
+  PanelLeft,
+  LogOut,
+} from 'lucide-react'
 
-const Sidebar = () => {
-  const { aToken } = useContext(AdminContext)
-  const { dToken } = useContext(DoctorContext)
+const Sidebar = ({ sidebarOpen, setSidebarOpen, mobileSidebarOpen, setMobileSidebarOpen }) => {
+  const { aToken, setAToken } = useContext(AdminContext)
+  const { dToken, setDToken } = useContext(DoctorContext)
+  const navigate = useNavigate()
+
+  const handleMobileClose = () => {
+    setMobileSidebarOpen(false)
+  }
+
+  const logout = () => {
+    navigate('/')
+    aToken && setAToken('')
+    aToken && sessionStorage.removeItem('aToken')
+    dToken && setDToken('')
+    dToken && sessionStorage.removeItem('dToken')
+    setMobileSidebarOpen(false)
+  }
+
+  const navClass = ({ isActive }) =>
+    `flex items-center gap-3 py-3.5 px-3 md:px-5 cursor-pointer transition-all duration-200 whitespace-nowrap rounded-xl mx-2 ${
+      isActive
+        ? 'bg-purple-100 text-purple-800 border border-purple-200'
+        : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'
+    }`
 
   return (
-    <div className='min-h-screen border-r border-purple-200 shadow-sm shadow-purple-200 bg-white  sm:w-20 md:w-56 lg:w-72'>
-      {
-        aToken && <ul className='mt-5'>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/admin-dashboard'}>
-            {/* <img src={assets.home_icon} alt="" /> */}
-            <House />
-            <p className='hidden md:block'>DashBoard</p>
-          </NavLink>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/all-appointments'}>
-            {/* <img src={assets.appointment_icon} alt="" /> */}
-            <CalendarDays />
-            <p className='hidden md:block'>Appointments</p>
-          </NavLink>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/add-doctor'}>
-            {/* <img src={assets.add_icon} alt="" /> */}
-            <SquarePlus />
-            <p className='hidden md:block'>Add Doctor</p>
-          </NavLink>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/doctor-list'}>
-            {/* <img src={assets.people_icon} alt="" /> */}
-            <Users />
-            <p className='hidden md:block'>Doctor List</p>
-          </NavLink>
+    <>
+      {mobileSidebarOpen && (
+        <div
+          className='fixed inset-0 z-40 bg-black/30 lg:hidden'
+          onClick={handleMobileClose}
+        />
+      )}
 
-        </ul>
-      }
-      {
-        dToken && <ul className='mt-5'>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/doctor-dashboard'}>
-            <House />
-            <p className='hidden md:block'>DashBoard</p>
-          </NavLink>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/doctor-appointments'}>
-            <CalendarDays />
-            <p className='hidden md:block'>Appointments</p>
-          </NavLink>
-          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9  cursor-pointer transition-all duration-200 ${isActive ? 'bg-purple-100 text-purple-800 border-r-4 border-purple-700' : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700'}`} to={'/doctor-profile'}>
-            <SquarePlus />
-            <p className='hidden md:block'>Profile</p>
-          </NavLink>
-          
-        </ul>
-      }
+      <aside
+        className={`
+          fixed top-16 left-0 z-50 h-[calc(100vh-64px)] bg-white border-r border-purple-200 shadow-sm shadow-purple-200
+          transition-all duration-300 ease-in-out flex flex-col
+          ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          w-72 lg:translate-x-0 lg:fixed lg:z-30 lg:h-[calc(100vh-64px)]
+          ${sidebarOpen ? 'lg:w-72' : 'lg:w-20'}
+          shrink-0 overflow-hidden
+        `}
+      >
+        <div className='flex items-center justify-between px-3 py-3 border-b border-purple-100'>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className='hidden lg:flex items-center justify-center h-10 w-10 rounded-xl border border-purple-200 text-purple-800 hover:bg-purple-50 transition'
+          >
+            <PanelLeft size={18} />
+          </button>
 
-    </div>
+          <div className='lg:hidden flex w-full justify-end'>
+            <button
+              onClick={handleMobileClose}
+              className='p-2 rounded-lg hover:bg-purple-50 text-purple-800'
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div className='flex-1 overflow-y-auto py-3'>
+          {aToken && (
+            <ul className='space-y-1'>
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/admin-dashboard'
+                  onClick={handleMobileClose}
+                >
+                  <House className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Dashboard
+                  </span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/all-appointments'
+                  onClick={handleMobileClose}
+                >
+                  <CalendarDays className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Appointments
+                  </span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/add-doctor'
+                  onClick={handleMobileClose}
+                >
+                  <SquarePlus className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Add Doctor
+                  </span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/doctor-list'
+                  onClick={handleMobileClose}
+                >
+                  <Users className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Doctor List
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
+          )}
+
+          {dToken && (
+            <ul className='space-y-1'>
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/doctor-dashboard'
+                  onClick={handleMobileClose}
+                >
+                  <House className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Dashboard
+                  </span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/doctor-appointments'
+                  onClick={handleMobileClose}
+                >
+                  <CalendarDays className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Appointments
+                  </span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={navClass}
+                  to='/doctor-profile'
+                  onClick={handleMobileClose}
+                >
+                  <SquarePlus className='shrink-0' />
+                  <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline`}>
+                    Profile
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
+          )}
+        </div>
+
+        <div className='border-t border-purple-100 p-3'>
+          <button
+            onClick={logout}
+            className='w-full flex items-center gap-3 rounded-xl px-3 md:px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-800 transition-all duration-200'
+          >
+            <LogOut className='shrink-0' size={18} />
+            <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline font-medium`}>
+              Logout
+            </span>
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }
 
