@@ -73,10 +73,10 @@ MediFlow provides a seamless experience for patients, doctors, and administrator
 ## Screenshots
 
 ### Login Page
-![Login Page](screenshots/Login-sc.png)
+![Login Page](screenshots/Login.png)
 
 ### Home Page
-![Home Page](screenshots/Home-sc.png)
+![Home Page](screenshots/Home.png)
 
 ### Doctors Page
 ![Doctors Page](screenshots/Doctors-sc.png)
@@ -85,13 +85,13 @@ MediFlow provides a seamless experience for patients, doctors, and administrator
 ![Booking Page](screenshots/Booking-sc.png)
 
 ### Admin Login
-![Admin Login](screenshots/AdminLogin-sc.png)
+![Admin Login](screenshots/PanelLogin.png)
 
 ### Admin dashboard
-![Admin dashboard](screenshots/AdminDash-sc.png)
+![Admin dashboard](screenshots/PanelDash.png)
 
 ### Admin Appointments
-![Admin Appointments](screenshots/AdminAppointments.png)
+![Admin Appointments](screenshots/PanelAppointments.png)
 
 ### Doctor dashboard
 ![Doctor dashboard](screenshots/Doctordash-sc.png)
