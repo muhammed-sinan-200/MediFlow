@@ -200,7 +200,7 @@ const Sidebar = ({
         <div className='border-t border-purple-100 p-3'>
           <button
             onClick={logout}
-            className='w-full flex items-center gap-3 rounded-xl px-3 md:px-5 py-3 text-gray-700 transition-all duration-200 hover:bg-red-500 hover:text-white'
+            className='w-full flex items-center gap-3 rounded-xl px-3 md:px-5 py-3 text-gray-700 transition-all duration-200 bg-purple-100 hover:bg-red-500 hover:text-white'
           >
             <LogOut className='shrink-0' size={18} />
             <span className={`${sidebarOpen ? 'lg:inline' : 'lg:hidden'} inline font-medium`}>
