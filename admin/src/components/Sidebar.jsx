@@ -55,16 +55,16 @@ const Sidebar = ({
 
       <aside
         className={`
-          fixed left-0 z-50 bg-white border-r border-purple-200 shadow-sm shadow-purple-200
+          fixed left-0 top-0 z-50 w-72 bg-white border-r border-purple-200 shadow-sm shadow-purple-200
           transition-all duration-300 ease-in-out flex flex-col
           ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          top-0 h-screen w-72
+          h-[100dvh]
           lg:top-16 lg:h-[calc(100vh-64px)] lg:translate-x-0 lg:fixed lg:z-30
           ${sidebarOpen ? 'lg:w-72' : 'lg:w-20'}
           shrink-0 overflow-hidden
         `}
       >
-        <div className='border-b border-purple-100'>
+        <div className='border-b border-purple-100 shrink-0'>
           <div className='lg:hidden h-16 flex items-center justify-between px-4 sm:px-6 md:px-8 bg-white'>
             <div className='flex items-center gap-3 min-w-0'>
               <div className='bg-purple-700 p-2 rounded-2xl w-fit shrink-0'>
@@ -96,7 +96,7 @@ const Sidebar = ({
           </div>
         </div>
 
-        <div className='flex-1 overflow-y-auto py-3'>
+        <div className='flex-1 overflow-y-auto py-3 pb-6'>
           {aToken && (
             <ul className='space-y-1'>
               <li>
@@ -197,7 +197,7 @@ const Sidebar = ({
           )}
         </div>
 
-        <div className='border-t border-purple-100 p-3'>
+        <div className='border-t border-purple-100 p-3 shrink-0 pb-[calc(env(safe-area-inset-bottom)+12px)]'>
           <button
             onClick={logout}
             className='w-full flex items-center gap-3 rounded-xl px-3 md:px-5 py-3 text-gray-700 transition-all duration-200 bg-purple-100 hover:bg-red-500 hover:text-white'
