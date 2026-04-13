@@ -13,6 +13,7 @@ import { DoctorContext } from './context/DoctorContext'
 import DoctorDashboard from './pages/Doctor/DoctorDashboard'
 import DoctorAppointment from './pages/Doctor/DoctorAppointment'
 import DoctorProfile from './pages/Doctor/DoctorProfile'
+import ScrollToTop from './components/ScrollToTop'
 
 const App = () => {
   const { aToken } = useContext(AdminContext)
@@ -41,7 +42,9 @@ const App = () => {
         <main
           className={`flex-1 min-w-0 transition-all duration-300 ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'
             }`}
-        >          <Routes>
+        >          
+        <ScrollToTop/>
+        <Routes>
             <Route
               path="/"
               element={
