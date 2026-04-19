@@ -4,63 +4,77 @@ import { AppContext } from '../context/AppContext'
 import { motion } from 'framer-motion'
 
 const TopDoctorsList = () => {
-
     const { doctors } = useContext(AppContext)
     const navigate = useNavigate()
+
     return (
         <div className='flex flex-col items-center gap-4 py-10 mt-20'>
-            <motion.h1 initial={{ opacity: 0, y: 20 }}
+            <motion.h1
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className='text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-800 to-indigo-600 sm:text-4xl'>
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className='text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-800 to-indigo-600 sm:text-4xl'
+            >
                 Our Top Doctors
             </motion.h1>
-            <motion.h1 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
+
+            <h1
                 className='text-2xl font-semibold text-transparent bg-clip-text bg-linear-to-r
-            from-purple-800 to-indigo-600 sm:text-4xl text-center'>
+                from-purple-800 to-indigo-600 sm:text-4xl text-center'
+            >
                 Expert Care. Trusted Doctors. Exceptional Outcomes.
-            </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className='text-gray-600 font-base text-md text-center'>
+            </h1>
+
+            <p className='text-gray-600 font-base text-md text-center'>
                 Choose your doctor and book consultations with experienced specialists dedicated to your well-being.
-            </motion.p>
+            </p>
+
             <div className='w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-6'>
                 {
                     doctors.slice(0, 8).map((item, index) => (
-                        <div onClick={() => navigate(`/appointments/${item._id}`)} key={index}
-                            className='border border-purple-300 rounded-2xl overflow-hidden
-                                     hover:border-purple-400 cursor-pointer hover:-translate-y-2 
-                                     transition-all duration-300 group'
+                        <div
+                            onClick={() => navigate(`/appointments/${item._id}`)}
+                            key={index}
+                            className='border border-purple-300 rounded-2xl overflow-hidden cursor-pointer hover:border-purple-400 hover:-translate-y-2 transition-transform transition-colors duration-300 group'
                         >
-                            <img src={item.image} alt="" className='group-hover:bg-purple-100' />
+                            <img
+                                src={item.image}
+                                alt=""
+                                className='transition-colors duration-300 group-hover:bg-purple-100'
+                            />
+
                             <div className='p-4'>
-                                <div className={`flex items-center text-center gap-2 ${item.available ? 'text-green-300' : 'text-gray-300'}  text-sm`}>
-                                    <p className={`rounded-full ${item.available ? 'bg-green-300' : 'bg-gray-300'}  w-2 h-2`}></p><p>{item.available ? "Available" : "Not Available"}</p>
+                                <div className={`flex items-center text-center gap-2 ${item.available ? 'text-green-300' : 'text-gray-300'} text-sm`}>
+                                    <p className={`rounded-full ${item.available ? 'bg-green-300' : 'bg-gray-300'} w-2 h-2`}></p>
+                                    <p>{item.available ? "Available" : "Not Available"}</p>
                                 </div>
+
                                 <p className='text-purple-950 text-lg font-medium'>{item.name}</p>
                                 <p className='text-purple-500 text-sm font-semibold'>{item.speciality}</p>
                             </div>
                         </div>
-
                     ))
                 }
             </div>
-            <button onClick={() => { navigate('/doctors'); scrollTo(0, 0) }}
+
+            <button
+                onClick={() => {
+                    navigate('/doctors')
+                    scrollTo(0, 0)
+                }}
                 className='
                     relative overflow-hidden
-                    border p-2 mt-8 
-                  border-purple-500 rounded cursor-pointer text-purple-600  
-                    before:absolute before:inset-0 before:bg-purple-950 transition-colors
-                    before:scale-x-0 before:origin-left before:transition-transform 
-                    hover:before:scale-x-100 before:duration-300 hover:text-purple-100'
-            ><span className='relative z-20'>View all doctors</span></button>
+                    border p-2 mt-8
+                    border-purple-500 rounded cursor-pointer text-purple-600
+                    before:absolute before:inset-0 before:bg-purple-950
+                    before:scale-x-0 before:origin-left before:transition-transform
+                    before:duration-300 hover:before:scale-x-100
+                    transition-colors hover:text-purple-100
+                '
+            >
+                <span className='relative z-20'>View all doctors</span>
+            </button>
         </div>
     )
 }

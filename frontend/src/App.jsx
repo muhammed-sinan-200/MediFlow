@@ -10,6 +10,7 @@ import MyAppointments from './pages/MyAppointments'
 import Login from './pages/Login'
 import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
+import BottomNav from './components/BottomNav'
 import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import EmailVerify from './pages/EmailVerify'
@@ -21,32 +22,35 @@ import ScrollToTop from './components/ScrollToTop'
 import GuestRoute from './guestRoute/GuestRoute'
 
 function App() {
-
   return (
     <>
-    <div className='mx-4 sm:mx-[10%] pb-10'>
-      <ToastContainer />
-      <Navbar />
-      <ScrollToTop />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/doctors' element={<Doctors />} />
-        <Route path='/doctors/:speciality' element={<Doctors />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/contact' element={<Contact />} />
+      <div className='mx-4 sm:mx-[10%] pb-28 md:pb-10'>
+        <ToastContainer />
+        <ScrollToTop />
+        <Navbar />
 
-        <Route path='/login' element={<Login />} />
-        <Route path='/verify-email' element={<EmailVerify />} />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/doctors' element={<Doctors />} />
+          <Route path='/doctors/:speciality' element={<Doctors />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/contact' element={<Contact />} />
 
-        <Route path='/forgot-password' element={<GuestRoute><ForgotPassword /></GuestRoute>} />
-        <Route path='/verify-reset-otp' element={<GuestRoute><ResetOtpVerify /></GuestRoute>} />
-        <Route path='/reset-password' element={<GuestRoute><ResetPassword /></GuestRoute>} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/verify-email' element={<EmailVerify />} />
 
-        <Route path='/my-profile' element={<MyProfile />} />
-        <Route path='/my-appointments' element={<MyAppointments />} />
-        <Route path='/appointments/:docId' element={<Appointment />} />
-      </Routes>
-    </div>
+          <Route path='/forgot-password' element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+          <Route path='/verify-reset-otp' element={<GuestRoute><ResetOtpVerify /></GuestRoute>} />
+          <Route path='/reset-password' element={<GuestRoute><ResetPassword /></GuestRoute>} />
+
+          <Route path='/my-profile' element={<MyProfile />} />
+          <Route path='/my-appointments' element={<MyAppointments />} />
+          <Route path='/appointments/:docId' element={<Appointment />} />
+        </Routes>
+
+        <BottomNav />
+      </div>
+
       <Footer />
     </>
   )

@@ -45,21 +45,21 @@ const MyProfile = () => {
 
   return userData && (
     <motion.div
-      initial={{ y: 80, opacity: 0 }}
+      initial={{ y: 36, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className='max-w-3xl mx-auto bg-white/30 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-xl border border-purple-100 flex flex-col gap-8'
+      transition={{ duration: 0.45, ease: 'easeOut' }}
+      className='max-w-3xl mx-auto bg-white rounded-xl p-6 sm:p-8 shadow-lg border border-purple-100 flex flex-col gap-8'
     >
       <div className='flex flex-col items-center'>
         {isEdit ? (
           <label htmlFor='image' className='cursor-pointer'>
-            <div className='relative w-36 h-36 rounded-full overflow-hidden border-2 border-purple-200 shadow-xl'>
+            <div className='relative w-36 h-36 rounded-full overflow-hidden border-2 border-purple-200 shadow-md'>
               <img
                 className='w-full h-full object-cover'
                 src={image ? URL.createObjectURL(image) : userData.image}
                 alt="Profile"
               />
-              <div className='absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md'>
+              <div className='absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-sm'>
                 <img
                   className='w-5 h-5'
                   src={assets.upload_icon}
@@ -75,7 +75,7 @@ const MyProfile = () => {
             />
           </label>
         ) : (
-          <div className='w-36 h-36 rounded-full overflow-hidden border-2 border-purple-200 shadow-xl'>
+          <div className='w-36 h-36 rounded-full overflow-hidden border-2 border-purple-200 shadow-md'>
             <img
               className='w-full h-full object-cover'
               src={userData.image}
@@ -85,7 +85,7 @@ const MyProfile = () => {
         )}
       </div>
 
-      <div className='bg-white/70 backdrop-blur-md rounded-3xl p-5 sm:p-7 shadow-md border border-purple-100'>
+      <div className='bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-purple-100'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
           <div>
             <p className='text-sm font-medium text-gray-500 mb-2'>Name</p>
@@ -202,16 +202,16 @@ const MyProfile = () => {
       <div className='flex justify-center'>
         {isEdit ? (
           <motion.button
-            whileTap={{ scale: 0.95 }}
-            className='bg-purple-700 px-8 py-3 rounded-full cursor-pointer text-white hover:bg-purple-800 transition-all'
+            whileTap={{ scale: 0.97 }}
+            className='bg-purple-700 px-8 py-3 rounded-full cursor-pointer text-white hover:bg-purple-800 transition-colors'
             onClick={updateProfileData}
           >
             Save Profile
           </motion.button>
         ) : (
           <motion.button
-            whileTap={{ scale: 0.95 }}
-            className='bg-purple-700 text-white px-8 py-3 rounded-full cursor-pointer hover:bg-purple-800 transition-all'
+            whileTap={{ scale: 0.97 }}
+            className='bg-purple-700 text-white px-8 py-3 rounded-full cursor-pointer hover:bg-purple-800 transition-colors'
             onClick={() => setIsEdit(true)}
           >
             Edit Profile
