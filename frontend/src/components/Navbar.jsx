@@ -11,7 +11,7 @@ const Navbar = () => {
 
     const [isOpen, setIsOpen] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [drawerType, setDrawerType] = useState(null) 
+    const [drawerType, setDrawerType] = useState(null)
 
     const profileRef = useRef(null)
     const mobileMenuRef = useRef(null)
@@ -210,7 +210,7 @@ const Navbar = () => {
                             animate="visible"
                             exit="exit"
                             variants={drawerVariants}
-                            className="fixed top-0 right-0 h-screen w-[82%] max-w-[360px] bg-white shadow-2xl z-[60] flex flex-col"
+                            className="fixed top-0 right-0 h-[100dvh] w-[82%] max-w-[360px] bg-white shadow-2xl z-[60] flex flex-col"
                         >
                             <div className='flex items-center justify-end px-4 pt-4 pb-2'>
                                 <button
@@ -246,7 +246,7 @@ const Navbar = () => {
                                 </div>
                             )}
 
-                            <div className='flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2'>
+                            <div className='flex-1 overflow-y-auto px-4 py-4 pb-6 flex flex-col gap-2'>
                                 <NavLink
                                     to="/"
                                     onClick={closeAllMenus}
