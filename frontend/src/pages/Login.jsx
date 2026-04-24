@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import { Lock, Mail, UserPlus } from 'lucide-react'
+import { Lock, Mail, UserPlus, ArrowLeft } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { assets } from '../assets/assets.js'
@@ -11,6 +11,7 @@ import { assets } from '../assets/assets.js'
 const Login = () => {
   const { backendUrl, token, setToken } = useContext(AppContext)
   const [state, setState] = useState('Sign Up')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const {
@@ -20,10 +21,20 @@ const Login = () => {
     reset
   } = useForm()
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1)
+    } else {
+      navigate('/')
+    }
+  }
+
   const handleFormSubmit = async (data) => {
     const { name, email, password } = data
 
     try {
+      setLoading(true)
+
       if (state === 'Sign Up') {
         const { data: res } = await axios.post(backendUrl + '/api/user/register', { name, email, password })
 
@@ -55,11 +66,13 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleForgotPassword = () => {
-    sessionStorage.setItem("forgotFlow", "true");
+    sessionStorage.setItem("forgotFlow", "true")
     navigate("/forgot-password")
   }
 
@@ -68,9 +81,17 @@ const Login = () => {
   }, [token])
 
   return (
-    <div className='min-h-screen flex flex-col md:flex-row md:bg-gray-50 white'>
+    <div className='min-h-screen relative flex items-center justify-center md:flex-row md:bg-gray-50'>
 
-      <div className='hidden md:block w-1/2'>
+      <button
+        onClick={handleBack}
+        className='absolute top-4 left-4 flex items-center gap-1 text-sm bg-purple-200 rounded-2xl px-2 py-1 text-gray-600 hover:text-purple-700 cursor-pointer'
+      >
+        <ArrowLeft size={18} />
+        Back
+      </button>
+
+      <div className='hidden md:block w-1/2 h-screen'>
         <img
           src={assets.Hospital_family}
           alt="MediFlow"
@@ -86,7 +107,7 @@ const Login = () => {
           transition={{ duration: 0.5 }}
           className='w-full max-w-md'
         >
-          <div className='bg-white p-8 border border-purple-100 shadow flex flex-col gap-4'>
+          <div className='bg-white p-8 border border-purple-100 shadow flex flex-col gap-4 rounded-xl'>
 
             <div>
               <h1 className='text-3xl font-bold text-purple-800'>
@@ -109,6 +130,7 @@ const Login = () => {
                     placeholder='Enter your name'
                     className='w-full border border-gray-300 rounded-md pl-10 pr-3 py-2.5 outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500'
                     type="text"
+                    disabled={loading}
                   />
                 </div>
                 {errors.name && <p className='text-red-500 text-xs'>{errors.name.message}</p>}
@@ -127,6 +149,7 @@ const Login = () => {
                   placeholder='Enter your email'
                   className='w-full border border-gray-300 rounded-md pl-10 pr-3 py-2.5 outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
                   type="email"
+                  disabled={loading}
                 />
               </div>
               {errors.email && <p className='text-red-500 text-xs'>{errors.email.message}</p>}
@@ -144,6 +167,7 @@ const Login = () => {
                   placeholder='Enter your password'
                   className='w-full border border-gray-300 rounded-md pl-10 pr-3 py-2.5 outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
                   type="password"
+                  disabled={loading}
                 />
               </div>
               {errors.password && <p className='text-red-500 text-xs'>{errors.password.message}</p>}
@@ -163,9 +187,14 @@ const Login = () => {
 
             <button
               type='submit'
-              className='bg-purple-700 text-white py-2.5 rounded-md hover:bg-purple-800 transition active:scale-[0.98]'
+              disabled={loading}
+              className={`bg-purple-700 text-white py-2.5 rounded-md transition active:scale-[0.98] ${
+                loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-purple-800'
+              }`}
             >
-              {state === 'Sign Up' ? "Create Account" : "Login"}
+              {loading
+                ? (state === 'Sign Up' ? "Creating your account..." : "Logging you in…")
+                : (state === 'Sign Up' ? "Create Account" : "Login")}
             </button>
 
             <p className='text-sm text-gray-500 text-center'>

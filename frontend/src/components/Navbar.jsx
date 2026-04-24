@@ -175,7 +175,7 @@ const Navbar = () => {
                 ) : (
                     <button
                         onClick={() => navigate('/login')}
-                        className='hidden md:block group bg-purple-900 px-5 py-2 rounded-full cursor-pointer text-white font-medium hover:bg-white border border-purple-900 hover:border-purple-700 hover:text-purple-900 hover:shadow-md transition-all duration-200 ease-out'
+                        className='hidden md:block group bg-purple-900 px-5 py-2 rounded-full cursor-pointer text-white font-medium   '
                     >
                         <span className='group-hover:scale-105 inline-block transition-transform'>
                             Sign Up

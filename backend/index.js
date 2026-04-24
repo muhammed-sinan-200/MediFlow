@@ -6,6 +6,7 @@ import cloudinaryConnect from './config/cloudinary.js'
 import adminRouter from './routes/adminRoute.js'
 import userRouter from './routes/userRoute.js'
 import doctorRouter from './routes/doctorRoute.js'
+import aiRouter from './routes/aiRoute.js'
 
 //app configration
 
@@ -23,7 +24,7 @@ const port = process.env.PORT || 8000
 app.use('/api/admin',adminRouter)
 app.use('/api/doctor',doctorRouter)
 app.use('/api/user',userRouter)  
-
+app.use('/api/ai', aiRouter)
 
 app.get('/',(req,res)=>{
     res.send("Working aan") 

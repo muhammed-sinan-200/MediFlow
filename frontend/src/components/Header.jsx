@@ -1,78 +1,146 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { assets } from '../assets/assets.js'
+import React, { useCallback, useEffect, useState } from 'react'
+import useEmblaCarousel from 'embla-carousel-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { assets, heroSlides } from '../assets/assets.js'
+
+const AUTO_SLIDE_DELAY = 6000
 
 const Header = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'start',
+    duration: 25,
+  })
+
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
+  const scrollPrev = useCallback(() => {
+    emblaApi && emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    emblaApi && emblaApi.scrollNext()
+  }, [emblaApi])
+
+  const scrollTo = useCallback(
+    (index) => emblaApi && emblaApi.scrollTo(index),
+    [emblaApi]
+  )
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return
+    setSelectedIndex(emblaApi.selectedScrollSnap())
+  }, [emblaApi])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    onSelect()
+    emblaApi.on('select', onSelect)
+    return () => emblaApi.off('select', onSelect)
+  }, [emblaApi, onSelect])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    const interval = setInterval(() => emblaApi.scrollNext(), AUTO_SLIDE_DELAY)
+    return () => clearInterval(interval)
+  }, [emblaApi])
+
   return (
-    <motion.div
-      initial={{ y: -40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      style={{
-        background: 'linear-gradient(180deg, #5B21B6 0%, #552586 50%, #FFFFFF 100%)'
-      }}
-      className='flex flex-col md:flex-row rounded-xl px-4 sm:px-6 md:px-10 lg:px-20 overflow-hidden'
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
-        className='md:w-1/2 flex flex-col items-start justify-center gap-5 py-8 sm:py-10 md:py-[10vw] md:-mb-7.5'
-      >
-        <div className='flex flex-col gap-2 text-left'>
-          <h1 className='text-3xl sm:text-4xl text-white font-semibold leading-tight'>
-            CARE YOU CAN TRUST
-          </h1>
+    <div>
+      <section className="relative overflow-hidden rounded-2xl bg-[#f4efff]">
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex">
+            {heroSlides.map((slide) => (
+              <div key={slide.id} className="flex-[0_0_100%]">
+                <div className="relative h-[calc(100vh-170px)] min-h-[360px] max-h-[560px]">
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                   className="absolute inset-0 h-full w-full object-cover"
+                  />
 
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className='text-lg sm:text-xl md:text-2xl text-purple-100 font-medium leading-snug'
-          >
-            Your perfect health partner
-          </motion.p>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+
+                  <div className="relative z-20 flex h-full flex-col justify-center px-6 sm:px-10 lg:px-14">
+                    <div className="max-w-[700px]">
+                      <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs text-white backdrop-blur">
+                        {slide.eyebrow}
+                      </span>
+
+                      <h1 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-semibold text-white leading-tight">
+                        {slide.title}
+                      </h1>
+
+                      <p className="mt-3 text-sm sm:text-base text-white/85">
+                        {slide.description}
+                      </p>
+
+                      <div className="mt-5 flex gap-3 flex-wrap">
+                        {slide.primaryCta && (
+                          <a
+                            href={slide.primaryCta.href}
+                            className="bg-white text-purple-700 px-5 py-2.5 rounded-full font-medium flex items-center gap-2 hover:scale-105 transition"
+                          >
+                            {slide.primaryCta.label}
+                            <img src={assets.arrow_icon} className="w-4" />
+                          </a>
+                        )}
+
+                        {slide.secondaryCta && (
+                          <a
+                            href={slide.secondaryCta.href}
+                            className="border border-white/30 text-white px-5 py-2.5 rounded-full backdrop-blur hover:bg-white/10"
+                          >
+                            {slide.secondaryCta.label}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className='flex items-start sm:items-center gap-3 text-white text-sm sm:text-base font-light text-left max-w-md'>
-          <img
-            className='w-16 sm:w-20 md:w-26 flex-shrink-0'
-            src={assets.group_profiles}
-            alt="Trusted doctors"
-          />
-          <p className='leading-6'>
-            Book your appointment easily and connect with our trusted doctors.
-          </p>
-        </div>
-
-        <div className='w-full sm:w-auto'>
-          <a
-            href="#speciality"
-            className='inline-flex items-center justify-center gap-3 bg-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium hover:scale-105 transition-all duration-200 group text-sm sm:text-base'
-          >
-            Book Appointment
-            <img
-              className='w-4'
-              src={assets.arrow_icon}
-              alt="Arrow icon"
+      {/* CONTROLS BELOW HEADER */}
+      <div className="mt-4 flex items-center justify-between px-1 sm:px-2">
+        <div className="flex gap-2">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2.5 rounded-full transition-all ${
+                selectedIndex === i
+                  ? 'w-8 bg-purple-700'
+                  : 'w-2.5 bg-purple-200 hover:bg-purple-300'
+              }`}
             />
-          </a>
+          ))}
         </div>
-      </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
-        className='md:w-1/2 relative flex justify-center items-end mt-2 md:mt-0'
-      >
-        <img
-          className='w-full max-w-[320px] sm:max-w-[420px] md:max-w-full h-auto object-contain md:absolute md:bottom-0 rounded-lg'
-          src={assets.banner1}
-          alt="Header banner"
-        />
-      </motion.div>
-    </motion.div>
+        <div className="flex gap-2">
+          <button
+            onClick={scrollPrev}
+            aria-label="Previous slide"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-purple-200 bg-white text-purple-700 shadow-sm hover:bg-purple-50 transition"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <button
+            onClick={scrollNext}
+            aria-label="Next slide"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-700 text-white shadow-sm hover:bg-purple-800 transition"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 

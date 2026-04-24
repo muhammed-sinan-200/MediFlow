@@ -18,16 +18,31 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetOtpVerify from './pages/ResetOtpVerify'
 import ResetPassword from './pages/ResetPassword'
 import ScrollToTop from './components/ScrollToTop'
-
+import AIChatbot from "./components/aiChat/AIChatbot";
 import GuestRoute from './guestRoute/GuestRoute'
 
+import { useLocation } from 'react-router-dom'
+
 function App() {
+  const location = useLocation()
+
+  const authRoutes = [
+    '/login',
+    '/verify-email',
+    '/forgot-password',
+    '/verify-reset-otp',
+    '/reset-password'
+  ]
+
+  const isAuthPage = authRoutes.includes(location.pathname)
+
   return (
     <>
-      <div className='mx-4 sm:mx-[10%] pb-28 md:pb-10'>
+      <div className={isAuthPage ? '' : 'mx-4 sm:mx-[5%] pb-28 md:pb-10'}>
         <ToastContainer />
         <ScrollToTop />
-        <Navbar />
+
+        {!isAuthPage && <Navbar />}
 
         <Routes>
           <Route path='/' element={<Home />} />
@@ -48,10 +63,12 @@ function App() {
           <Route path='/appointments/:docId' element={<Appointment />} />
         </Routes>
 
-        <BottomNav />
+        {!isAuthPage && <BottomNav />}
       </div>
 
-      <Footer />
+      <AIChatbot />
+
+      {!isAuthPage && <Footer />}
     </>
   )
 }

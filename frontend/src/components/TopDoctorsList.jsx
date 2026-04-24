@@ -8,7 +8,7 @@ const TopDoctorsList = () => {
     const navigate = useNavigate()
 
     return (
-        <div className='flex flex-col items-center gap-4 py-10 mt-20'>
+        <div id='doctors' className='flex flex-col items-center gap-4 py-10 mt-20'>
             <motion.h1
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -63,17 +63,18 @@ const TopDoctorsList = () => {
                     navigate('/doctors')
                     scrollTo(0, 0)
                 }}
-                className='
-                    relative overflow-hidden
-                    border p-2 mt-8
-                    border-purple-500 rounded cursor-pointer text-purple-600
-                    before:absolute before:inset-0 before:bg-purple-950
-                    before:scale-x-0 before:origin-left before:transition-transform
-                    before:duration-300 hover:before:scale-x-100
-                    transition-colors hover:text-purple-100
-                '
+                className="
+    inline-flex items-center justify-center
+    px-5 py-2.5 mt-8
+    rounded-full
+    border border-purple-300
+    text-white text-sm font-medium
+    transition-all duration-200 bg-purple-700
+    hover:bg-purple-800 hover:border-purple-400
+    active:scale-[0.97] cursor-pointer
+  "
             >
-                <span className='relative z-20'>View all doctors</span>
+                View all doctors
             </button>
         </div>
     )

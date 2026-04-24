@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import { Heart } from 'lucide-react'
 import { motion } from "framer-motion"
+import { useNavigate } from "react-router-dom";
 
 const About = () => {
   const [liked, setLiked] = useState(false)
+  const navigate = useNavigate();
 
   const handleLikes = () => {
     setLiked(!liked)
@@ -156,8 +158,8 @@ const About = () => {
             Every drop counts. Join our blood donation program to help patients in need and contribute
             to saving lives in your community.
           </p>
-          <button
-            className='px-3 py-1.5 border border-purple-700 mt-4 rounded cursor-pointer hover:bg-purple-900 hover:text-white transition-colors duration-200'
+          <button  onClick={() => navigate('/contact')}
+            className='px-3 py-1.5 border border-purple-700 mt-4 rounded cursor-pointer bg-purple-700 hover:bg-purple-800 text-white transition-colors duration-200'
           >
             Donate
           </button>
