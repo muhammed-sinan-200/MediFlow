@@ -56,7 +56,6 @@ export const assets = {
   Ambulance,
   Medicine,
   Contact_us,
-
   hero_slide1,
   hero_slide2,
   hero_slide3,

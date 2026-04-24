@@ -18,7 +18,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetOtpVerify from './pages/ResetOtpVerify'
 import ResetPassword from './pages/ResetPassword'
 import ScrollToTop from './components/ScrollToTop'
-import AIChatbot from "./components/aiChat/AIChatbot";
+import AIChatbot from "./components/aiChat/AIChatBot";
 import GuestRoute from './guestRoute/GuestRoute'
 
 import { useLocation } from 'react-router-dom'
