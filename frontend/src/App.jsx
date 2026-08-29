@@ -1,5 +1,5 @@
 import './App.css'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 
 import Home from './pages/Home'
@@ -23,20 +23,10 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetOtpVerify from './pages/ResetOtpVerify'
 import ResetPassword from './pages/ResetPassword'
 
-import AppLoader from './components/AppLoader'
 import { ToastContainer } from 'react-toastify'
 
 function App() {
   const location = useLocation()
-  const [appLoading, setAppLoading] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAppLoading(false)
-    }, 1800)
-
-    return () => clearTimeout(timer)
-  }, [])
 
   const authRoutes = [
     '/login',
@@ -50,8 +40,6 @@ function App() {
 
   return (
     <>
-      <AppLoader isLoading={appLoading} />
-
       <div className={isAuthPage ? '' : 'mx-4 sm:mx-[5%] pb-28 md:pb-10'}>
         <ToastContainer />
         <ScrollToTop />

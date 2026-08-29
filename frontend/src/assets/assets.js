@@ -1,60 +1,40 @@
-import group_profiles from './group_profiles.png'
-import cross_icon from './cross_icon.png'
-import verified_icon from './verified_icon.svg'
 import arrow_icon from './arrow_icon.svg'
-import info_icon from './info_icon.svg'
-import upload_icon from './upload_icon.png'
-import my_portrait from './my_portrait.jpg'
 import Dermatologist from './Dermatologist.svg'
 import Gastroenterologist from './Gastroenterologist.svg'
 import General_physician from './General_physician.svg'
 import Gynecologist from './Gynecologist.svg'
 import Neurologist from './Neurologist.svg'
 import Pediatricians from './Pediatricians.svg'
-import Hospital_wheelchair from './Hospital_wheelchair.png'
-import Hospital_patient from './Hospital_patient.png'
-import Hospital_family from './Hospital_family.png'
-import Hospital_building from './Hospital_building.png'
-import Hospital_bed from './Hospital_bed.png'
-import Health_team from './Health_team.png'
-import Contact_us from './Contact_us.png'
-import Doctors from './Doctors.png'
-import Doctor from './Doctor.png'
-import CT_scan from './CT_scan.png'
-import Blood_donation from './Blood_donation.png'
-import Ambulance from './Ambulance.png'
-import Medicine from './Medicine.png'
+import Hospital_family from './Hospital_family.webp'
+import Hospital_building from './Hospital_building.webp'
+import Hospital_bed from './Hospital_bed.webp'
+import Health_team from './Health_team.webp'
+import Contact_us from './Contact_us.webp'
+import Doctors from './Doctors.webp'
+import CT_scan from './CT_scan.webp'
+import Blood_donation from './Blood_donation.webp'
+import Ambulance from './Ambulance.webp'
 
-import hero_slide1 from './hero_slide1.png'
-import hero_slide2 from './hero_slide2.png'
-import hero_slide3 from './hero_slide3.png'
-import hero_slide4 from './hero_slide4.png'
-import hero_slide5 from './hero_slide5.png'
-import hero_slide6 from './hero_slide6.png'
+import hero_slide1 from './hero_slide1.webp'
+import hero_slide2 from './hero_slide2.webp'
+import hero_slide3 from './hero_slide3.webp'
+import hero_slide4 from './hero_slide4.webp'
+import hero_slide5 from './hero_slide5.webp'
+import hero_slide6 from './hero_slide6.webp'
 
 import { Baby, Brain, HeartPlus, HeartPulse, Sparkles, Stethoscope } from 'lucide-react'
 
 
 export const assets = {
-  group_profiles,
-  my_portrait,
-  verified_icon,
-  info_icon,
   arrow_icon,
-  cross_icon,
-  upload_icon,
-  Hospital_wheelchair,
-  Hospital_patient,
   Hospital_family,
   Hospital_building,
   Hospital_bed,
   Health_team,
   Doctors,
-  Doctor,
   CT_scan,
   Blood_donation,
   Ambulance,
-  Medicine,
   Contact_us,
   hero_slide1,
   hero_slide2,

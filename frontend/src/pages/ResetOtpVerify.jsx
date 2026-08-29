@@ -31,7 +31,8 @@ const ResetOtpVerify = () => {
 
       if (data.success) {
         toast.success("OTP verified. You can now reset your password.");
-        sessionStorage.setItem("otpVerified", "true");
+        sessionStorage.setItem("resetToken", data.resetToken);
+        sessionStorage.removeItem("otpVerified");
         navigate("/reset-password");
       } else {
         toast.error(data.message);

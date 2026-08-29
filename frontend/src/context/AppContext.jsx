@@ -31,10 +31,13 @@ const AppContextProvider = (props) => {
             const {data} = await axios.get(backendUrl +'/api/user/get-profile',{headers:{token}})
             if (data.success) {
                 setUserData(data.userData)
-            }else{
-                console.log(error);
-                
-                toast.error(error.message)
+            } else {
+                localStorage.removeItem('token')
+                setToken(false)
+                setUserData(false)
+                if (data.message) {
+                    toast.error(data.message)
+                }
             }
         } catch (error) {
             

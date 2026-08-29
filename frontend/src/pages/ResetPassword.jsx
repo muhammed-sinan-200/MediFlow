@@ -6,19 +6,18 @@ import { useNavigate } from "react-router-dom";
 const ResetPassword = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem("resetEmail");
-    const otpVerified = sessionStorage.getItem("otpVerified");
-    if (!storedEmail || otpVerified !== "true") {
+    const storedToken = sessionStorage.getItem("resetToken");
+    if (!storedToken) {
       toast.error("Please verify OTP.");
       navigate("/forgot-password");
     } else {
-      setEmail(storedEmail);
+      setResetToken(storedToken);
     }
   }, []);
 
@@ -29,11 +28,15 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.post(`${backendUrl}/api/user/reset-password`, { email, newPassword });
+      const { data } = await axios.post(`${backendUrl}/api/user/reset-password`, {
+        resetToken,
+        newPassword,
+      });
 
       if (data.success) {
         toast.success(data.message);
         sessionStorage.removeItem("resetEmail");
+        sessionStorage.removeItem("resetToken");
         sessionStorage.removeItem("otpVerified");
         navigate("/login");
       } else {

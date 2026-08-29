@@ -16,6 +16,7 @@ const Appointment = () => {
   const [docSlots, setDocSlots] = useState([])
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
+  const [isBooking, setIsBooking] = useState(false)
 
   const fetchDetails = async () => {
     const docDetails = doctors.find(doc => doc._id === docId)
@@ -24,6 +25,10 @@ const Appointment = () => {
 
   const availableSlots = async () => {
     setDocSlots([])
+
+    if (!docDetails?.slots_booked) {
+      return
+    }
 
     let today = new Date()
 
@@ -35,12 +40,27 @@ const Appointment = () => {
       endTime.setDate(today.getDate() + i)
       endTime.setHours(21, 0, 0, 0)
 
-      if (today.getDate() === currentDate.getDate()) {
-        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
-        currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0)
+      if (i === 0) {
+        const now = new Date()
+        let nextSlot = new Date(now)
+        nextSlot.setSeconds(0, 0)
+        nextSlot.setMilliseconds(0)
+
+        const onBoundary = now.getMinutes() % 30 === 0 && now.getSeconds() === 0 && now.getMilliseconds() === 0
+        if (!onBoundary) {
+          if (now.getMinutes() < 30) {
+            nextSlot.setMinutes(30)
+          } else {
+            nextSlot.setHours(nextSlot.getHours() + 1)
+            nextSlot.setMinutes(0)
+          }
+        }
+
+        const clinicOpen = new Date(today)
+        clinicOpen.setHours(10, 0, 0, 0)
+        currentDate = nextSlot < clinicOpen ? clinicOpen : nextSlot
       } else {
-        currentDate.setHours(10)
-        currentDate.setMinutes(0)
+        currentDate.setHours(10, 0, 0, 0)
       }
 
       let timeSlots = []
@@ -68,7 +88,9 @@ const Appointment = () => {
  
         currentDate.setMinutes(currentDate.getMinutes() + 30)
       }
-      setDocSlots(prev => ([...prev, timeSlots]))
+      if (timeSlots.length > 0) {
+        setDocSlots(prev => ([...prev, timeSlots]))
+      }
     }
   }
 
@@ -79,8 +101,17 @@ const Appointment = () => {
       return navigate('/login')
     }
 
+    const selectedDaySlots = docSlots[slotIndex]
+    const selectedSlotDate = selectedDaySlots?.[0]?.datetime
+
+    if (!selectedSlotDate || !slotTime) {
+      toast.warn('Please select a date and time slot')
+      return
+    }
+
     try {
-      const date = docSlots[slotIndex][0].datetime
+      setIsBooking(true)
+      const date = selectedSlotDate
 
       let day = date.getDate()
       let month = date.getMonth() + 1
@@ -100,6 +131,8 @@ const Appointment = () => {
       console.log(error);
       toast.error(error.message)
 
+    } finally {
+      setIsBooking(false)
     }
   }
 
@@ -118,7 +151,30 @@ const Appointment = () => {
 
   }, [docSlots])
 
-  return docDetails && (
+  if (doctors.length === 0) {
+    return (
+      <div className='flex items-center justify-center min-h-[40vh] text-purple-700 font-medium'>
+        Loading doctor details...
+      </div>
+    )
+  }
+
+  if (!docDetails) {
+    return (
+      <div className='flex flex-col items-center justify-center min-h-[40vh] gap-2 text-center px-4'>
+        <p className='text-xl font-semibold text-purple-900'>Doctor not found</p>
+        <p className='text-sm text-gray-600'>This doctor does not exist or is no longer available.</p>
+        <button
+          onClick={() => navigate('/doctors')}
+          className='mt-3 px-5 py-2 rounded-full bg-purple-700 text-white text-sm hover:bg-purple-800 cursor-pointer'
+        >
+          Browse doctors
+        </button>
+      </div>
+    )
+  }
+
+  return (
     <div>
       <div className='flex flex-col sm:flex-row border border-purple-500 p-4 rounded-2xl gap-3'>
         <div>
@@ -151,9 +207,26 @@ const Appointment = () => {
         <div className='flex gap-4 mt-4 overflow-x-scroll scrollbar-hide'>
           {
             docSlots.length && docSlots.map((item, index) => (
-              <div onClick={() => setSlotIndex(index)} key={index}
+              <div onClick={() => {
+                setSlotIndex(index)
+                setSlotTime('')
+              }} key={index}
                 className={`flex gap-2 border rounded-2xl p-2 cursor-pointer hover:border-purple-900 ${slotIndex === index ? 'bg-purple-600 text-white border-2 border-purple-900' : 'border-purple-200'}`}>
-                <p>{item[0] && (index === 0 ? 'Today' : index === 1 ? 'Tommorrow' : daysOfWeek[item[0].datetime.getDay()])}</p>
+                <p>{item[0] && (() => {
+                  const slotDay = item[0].datetime
+                  const todayDate = new Date()
+                  const tomorrowDate = new Date()
+                  tomorrowDate.setDate(todayDate.getDate() + 1)
+
+                  const isSameDay = (a, b) =>
+                    a.getFullYear() === b.getFullYear() &&
+                    a.getMonth() === b.getMonth() &&
+                    a.getDate() === b.getDate()
+
+                  if (isSameDay(slotDay, todayDate)) return 'Today'
+                  if (isSameDay(slotDay, tomorrowDate)) return 'Tomorrow'
+                  return daysOfWeek[slotDay.getDay()]
+                })()}</p>
                 <p>{item[0] && item[0].datetime.getDate()}</p>
               </div>
             ))
@@ -161,7 +234,7 @@ const Appointment = () => {
         </div>
 
         <div className='flex items-center gap-3 w-full overflow-x-scroll scrollbar-hide mt-4'>
-          {docSlots.length && docSlots[slotIndex].map((item, index) => (
+          {docSlots.length && docSlots[slotIndex]?.map((item, index) => (
             <p onClick={() => setSlotTime(item.time)}
               className={`text-sm font-base shrink-0 px-5
                py-2 border rounded-full cursor-pointer hover:border-purple-900
@@ -170,7 +243,11 @@ const Appointment = () => {
             </p>
           ))}
         </div>
-        <button onClick={bookAppointment} className='border border-green-500 px-10 py-3 hover:bg-purple-50 hover:border-green-700 text-sm my-6 rounded-full cursor-pointer '>
+        <button
+          onClick={bookAppointment}
+          disabled={isBooking || !docSlots[slotIndex]?.length || !slotTime}
+          className='border border-green-500 px-10 py-3 hover:bg-purple-50 hover:border-green-700 text-sm my-6 rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+        >
           Book Appointment
         </button>
       </div>

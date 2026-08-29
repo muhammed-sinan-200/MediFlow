@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Send, Loader2, Trash2, Bot, Sparkles } from "lucide-react";
 import { AppContext } from "../../context/AppContext";
 
@@ -43,6 +44,7 @@ const TypingDots = () => {
 };
 
 const AIChatbot = () => {
+  const navigate = useNavigate();
   const { backendUrl, token, userData } = useContext(AppContext);
 
   const [open, setOpen] = useState(false);
@@ -429,16 +431,30 @@ const AIChatbot = () => {
 
                       {msg.role === "assistant" &&
                         msg.riskLevel === "medium" &&
-                        msg.requiresDoctor && (
+                        msg.escalationType === "book_doctor" && (
                           <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 shadow-sm">
                             <p className="font-medium">
                               It may be a good idea to speak with a doctor.
                             </p>
                             <div className="mt-3 flex flex-wrap gap-2">
-                              <button className="rounded-full bg-amber-500 px-3.5 py-2 text-xs font-medium text-white shadow-sm">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpen(false);
+                                  navigate("/doctors");
+                                }}
+                                className="rounded-full bg-amber-500 px-3.5 py-2 text-xs font-medium text-white shadow-sm"
+                              >
                                 Book Appointment
                               </button>
-                              <button className="rounded-full border border-amber-300 px-3.5 py-2 text-xs font-medium text-amber-900">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpen(false);
+                                  navigate("/doctors");
+                                }}
+                                className="rounded-full border border-amber-300 px-3.5 py-2 text-xs font-medium text-amber-900"
+                              >
                                 Consult Doctor
                               </button>
                             </div>
@@ -453,7 +469,14 @@ const AIChatbot = () => {
                               This may need urgent medical attention.
                             </p>
                             <div className="mt-3 flex gap-2">
-                              <button className="rounded-full bg-red-600 px-3.5 py-2 text-xs font-medium text-white">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpen(false);
+                                  navigate("/contact");
+                                }}
+                                className="rounded-full bg-red-600 px-3.5 py-2 text-xs font-medium text-white"
+                              >
                                 Get Help Now
                               </button>
                             </div>
