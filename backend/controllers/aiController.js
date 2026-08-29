@@ -30,21 +30,23 @@ const chatWithAI = async (req, res) => {
 
     let finalReply = "";
 
-    if (risk.riskLevel === "high") {
-      finalReply =
-        "This may be a serious condition. Please seek immediate medical attention or visit the nearest hospital.";
-    } else {
-      const recentMessages = await chatMessageModel
-        .find({ userId, sessionId: activeSessionId })
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .select("role message createdAt")
-        .lean();
+    const recentMessages = await chatMessageModel
+      .find({ userId, sessionId: activeSessionId })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select("role message createdAt")
+      .lean();
 
-      const orderedHistory = recentMessages.reverse();
+    const orderedHistory = recentMessages.reverse();
 
-      finalReply = await generateAIResponse(cleanMessage, orderedHistory);
-    }
+    // Exclude the message just saved above; aiService appends cleanMessage once as "Latest user message"
+    const priorHistory = orderedHistory.slice(0, -1);
+
+    finalReply = await generateAIResponse(
+      cleanMessage,
+      priorHistory,
+      risk.riskLevel
+    );
 
     await chatMessageModel.create({
       userId,
@@ -72,9 +74,10 @@ const chatWithAI = async (req, res) => {
 const getChatHistory = async (req, res) => {
   try {
     const userId = req.userId;
+    const sessionId = req.query.sessionId || "default";
 
     const messages = await chatMessageModel
-      .find({ userId })
+      .find({ userId, sessionId })
       .sort({ createdAt: 1 })
       .select("role message riskLevel escalationType createdAt sessionId");
 

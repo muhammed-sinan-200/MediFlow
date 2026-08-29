@@ -1,6 +1,7 @@
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
+import fs from 'fs/promises'
 import doctorModel from '../models/doctorModel.js'
 import jwt from 'jsonwebtoken'
 import appointmentModel from '../models/appointmentModel.js'
@@ -12,11 +13,18 @@ const addDoctor = async (req, res, next) => {
         const { name, email, password, speciality, degree, experience, about, fees, address } = req.body
         const imageFile = req.file
 
-        // console.log({ name, email, password, speciality, degree, experience, about, fees, address },imageFile);
 
+        if (!name || !email || !password || !speciality || !degree || !experience || !about || fees === undefined || fees === null || fees === '' || !address) {
+            return res.json({ success: false, message: "Fields missing" })
+        }
 
-        if (!name, !email, !password, !speciality, !degree, !experience, !about, !fees, !address) {
-            return res.json({success:false, message: "Fields missing" })
+        if (!imageFile) {
+            return res.json({ success: false, message: "Doctor image is required" })
+        }
+
+        const feesNumber = Number(fees)
+        if (Number.isNaN(feesNumber) || feesNumber <= 0) {
+            return res.json({ success: false, message: "Invalid fees" })
         }
 
         if (!validator.isEmail(email)) {
@@ -30,8 +38,15 @@ const addDoctor = async (req, res, next) => {
         const salt = bcrypt.genSaltSync(saltRounds)
         const hashed = bcrypt.hashSync(password, salt)
 
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
-        const imageUrl = imageUpload.secure_url
+        let imageUrl
+        try {
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
+            imageUrl = imageUpload.secure_url
+        } finally {
+            if (imageFile?.path) {
+                await fs.unlink(imageFile.path).catch(() => {})
+            }
+        }
 
         //Doctors data stores in
         const doctorData = {
@@ -43,7 +58,7 @@ const addDoctor = async (req, res, next) => {
             degree,
             experience,
             about,
-            fees,
+            fees: feesNumber,
             address: JSON.parse(address),
             date: Date.now()
         }
@@ -72,7 +87,11 @@ const adminLogin = async (req, res, next) => {
         const { email, password } = req.body;
 
         if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-            const token = jwt.sign(email+password,process.env.JWT_SECRET_KEY)
+            const token = jwt.sign(
+                { role: 'admin' },
+                process.env.JWT_SECRET_KEY,
+                { expiresIn: '1d' }
+            )
             res.json({success:true,token})   
         }else{
             res.json({success:false,message:"Invalid Credentials"})

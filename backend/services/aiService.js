@@ -31,6 +31,16 @@ Style rules:
 - continue conversation naturally if context exists
 `;
 
+const highRiskEmergencyInstructions = `
+HIGH-RISK EMERGENCY MODE — follow these strictly:
+- Never diagnose or prescribe.
+- Keep the reply to 2–3 short sentences only.
+- Clearly recommend seeking immediate medical attention or emergency care now.
+- Do not reassure the user that they are safe or that it is probably nothing serious.
+- Do not give treatment steps, home remedies, or medication instructions for this emergency.
+- Respond specifically to the user's situation when possible, while staying brief and urgent.
+`;
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const formatHistory = (history = []) => {
@@ -44,12 +54,15 @@ const formatHistory = (history = []) => {
     .join("\n");
 };
 
-const generateWithModel = async (message, history = []) => {
+const generateWithModel = async (message, history = [], riskLevel = "low") => {
   const model = genAI.getGenerativeModel({ model: modelName });
+
+  const emergencyBlock =
+    riskLevel === "high" ? `\n${highRiskEmergencyInstructions}\n` : "";
 
   const prompt = `
 ${systemPrompt}
-
+${emergencyBlock}
 Recent conversation:
 ${formatHistory(history)}
 
@@ -64,9 +77,9 @@ Reply naturally as MediFlow AI Health Assistant.
   return response.text().trim();
 };
 
-const generateAIResponse = async (message, history = []) => {
+const generateAIResponse = async (message, history = [], riskLevel = "low") => {
   try {
-    return await generateWithModel(message, history);
+    return await generateWithModel(message, history, riskLevel);
   } catch (error) {
     console.log(
       `AI Error (${modelName}):`,
@@ -77,7 +90,7 @@ const generateAIResponse = async (message, history = []) => {
     if (error?.status === 503) {
       try {
         await sleep(1200);
-        return await generateWithModel(message, history);
+        return await generateWithModel(message, history, riskLevel);
       } catch (retryError) {
         console.log(
           `Retry Failed (${modelName}):`,
@@ -85,6 +98,10 @@ const generateAIResponse = async (message, history = []) => {
           retryError?.message || retryError
         );
       }
+    }
+
+    if (riskLevel === "high") {
+      return "This may be a serious condition. Please seek immediate medical attention or visit the nearest hospital.";
     }
 
     return "I'm having a bit of trouble responding right now. Give me a moment and try again.";

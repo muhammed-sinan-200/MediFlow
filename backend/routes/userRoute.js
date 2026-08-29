@@ -7,7 +7,7 @@ import {
     forgetPassword
 } from '../controllers/userController.js'
 import userAuth from '../middlewares/userAuth.js'
-import upload from '../middlewares/multer.js'
+import { uploadImage } from '../middlewares/multer.js'
 const userRouter = Router()
 
 userRouter.post('/register', registerUser)
@@ -21,7 +21,7 @@ userRouter.post('/verify-otp', verifyOtp)
 userRouter.post("/reset-password", resetPassword);
 
 userRouter.get('/get-profile', userAuth, getProfile)
-userRouter.post('/update-profile', upload.single('image'), userAuth, updateProfile)
+userRouter.post('/update-profile', userAuth, uploadImage, updateProfile)
 userRouter.post('/book-appointment', userAuth, bookAppointment)
 userRouter.get('/appointments', userAuth, listAppointment)
 userRouter.post('/cancel-appointment', userAuth, cancelAppointment)

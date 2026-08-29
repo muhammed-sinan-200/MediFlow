@@ -1,6 +1,8 @@
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
+import fs from 'fs/promises'
 import userModel from '../models/userModel.js';
 import { v2 as cloudinary } from 'cloudinary'
 import doctorModel from '../models/doctorModel.js';
@@ -98,7 +100,7 @@ const loginUser = async (req, res, next) => {
 
         const isPassword = await bcrypt.compare(req.body.password, user.password);
         if (isPassword) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY)
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' })
             return res.json({
                 success: true, token
             })
@@ -317,9 +319,21 @@ const verifyOtp = async (req, res) => {
             })
         }
 
+        // OTP is one-time; further steps require the reset token
+        user.emailOtp = "";
+        user.emailOtpExpires = null;
+        await user.save();
+
+        const resetToken = jwt.sign(
+            { id: user._id, purpose: "password-reset" },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "10m" }
+        );
+
         return res.json({
             success: true,
-            message: "OTP verified. You may reset your password."
+            message: "OTP verified. You may reset your password.",
+            resetToken
         });
     } catch (error) {
         console.error("Verify reset OTP error:", error);
@@ -334,11 +348,11 @@ const verifyOtp = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        const { email,  newPassword } = req.body;
-        if (!email || !newPassword) {
+        const { resetToken, newPassword } = req.body;
+        if (!resetToken || !newPassword) {
             return res.json({
                 success: false,
-                message: "Email, and new password are required"
+                message: "Reset token and new password are required"
             });
         }
 
@@ -349,7 +363,24 @@ const resetPassword = async (req, res) => {
             });
         }
 
-        const user = await userModel.findOne({ email });
+        let decoded;
+        try {
+            decoded = jwt.verify(resetToken, process.env.JWT_SECRET_KEY);
+        } catch {
+            return res.json({
+                success: false,
+                message: "Invalid or expired reset token. Please verify OTP again."
+            });
+        }
+
+        if (decoded.purpose !== "password-reset" || !decoded.id) {
+            return res.json({
+                success: false,
+                message: "Invalid reset token"
+            });
+        }
+
+        const user = await userModel.findById(decoded.id);
 
         if (!user) {
             return res.json({
@@ -359,7 +390,6 @@ const resetPassword = async (req, res) => {
         }
 
         user.password = await bcrypt.hash(newPassword, 10);
-
         user.emailOtp = "";
         user.emailOtpExpires = null;
         await user.save();
@@ -402,10 +432,14 @@ const updateProfile = async (req, res, next) => {
         }
         await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
         if (imageFile) {
-            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
-            const imageURL = imageUpload.secure_url
+            try {
+                const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
+                const imageURL = imageUpload.secure_url
 
-            await userModel.findByIdAndUpdate(userId, { image: imageURL })
+                await userModel.findByIdAndUpdate(userId, { image: imageURL })
+            } finally {
+                await fs.unlink(imageFile.path).catch(() => {})
+            }
         }
 
         res.json({ success: true, message: "Profile Updated" })
@@ -423,45 +457,55 @@ const bookAppointment = async (req, res) => {
         if (!docId || !slotDate || !slotTime) {
             return res.json({ success: false, message: "Please select a date and time slot" })
         }
-        const docData = await doctorModel.findById(docId).select('-password')
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        // Atomic reserve: only one concurrent request can claim this slot
+        const reservedDoctor = await doctorModel.findOneAndUpdate(
+            {
+                _id: docId,
+                available: true,
+                [`slots_booked.${slotDate}`]: { $nin: [slotTime] }
+            },
+            {
+                $addToSet: { [`slots_booked.${slotDate}`]: slotTime }
+            },
+            { new: true }
+        ).select('-password')
 
-        if (!docData.available) {
-            return res.json({ success: false, message: "Doctor not available" })
-        }
-        //checking if the slotes rae availoable
-        let slots_booked = docData.slots_booked
-        if (slots_booked[slotDate]) {
-            if (slots_booked[slotDate].includes(slotTime)) {
-                return res.json({ success: false, message: "Slot not available" })
-            } else {
-                slots_booked[slotDate].push(slotTime)
-            }
-        } else {
-            slots_booked[slotDate] = []
-            slots_booked[slotDate].push(slotTime)
+        if (!reservedDoctor) {
+            return res.json({ success: false, message: "Slot not available" })
         }
 
         const userData = await userModel.findById(userId).select('-password')
 
+        const docData = reservedDoctor.toObject()
         delete docData.slots_booked
+        delete docData.password
 
         const appointmentData = {
             userId,
             docId,
             userData,
             docData,
-            amount: docData.fees,
+            amount: reservedDoctor.fees,
             slotTime,
             slotDate,
             date: Date.now()
         }
 
-        const newAppointment = new appointmentModel(appointmentData)
-        await newAppointment.save()
+        try {
+            const newAppointment = new appointmentModel(appointmentData)
+            await newAppointment.save()
+        } catch (saveError) {
+            // Roll back reserved slot if appointment could not be created
+            await doctorModel.findByIdAndUpdate(docId, {
+                $pull: { [`slots_booked.${slotDate}`]: slotTime }
+            })
 
-        //save new slots in Doctor Data
-
-        await doctorModel.findByIdAndUpdate(docId, { slots_booked })
+            if (saveError.code === 11000) {
+                return res.json({ success: false, message: "Slot not available" })
+            }
+            throw saveError
+        }
 
         res.json({ success: true, message: 'Appointment booked' })
     } catch (error) {
@@ -505,7 +549,6 @@ const cancelAppointment = async (req, res) => {
             });
         }
 
-
         await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
 
         //returning doc slotes after cancelling
@@ -535,11 +578,20 @@ const paymentRazorpay = async (req, res) => {
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
         })
+        const userId = req.userId
         const { appointmentId } = req.body
         const appointmentData = await appointmentModel.findById(appointmentId)
 
         if (!appointmentData || appointmentData.cancelled) {
             return res.json({ success: false, message: "Appointment cancelled or not found " })
+        }
+
+        if (String(appointmentData.userId) !== String(userId)) {
+            return res.json({ success: false, message: "Unauthorized action" })
+        }
+
+        if (appointmentData.payment) {
+            return res.json({ success: false, message: "Appointment already paid" })
         }
 
         const options = {
@@ -558,24 +610,84 @@ const paymentRazorpay = async (req, res) => {
 
 const verifyRazorpay = async (req, res) => {
     try {
+        const userId = req.userId
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.json({
+                success: false,
+                message: "Payment verification details are required"
+            })
+        }
+
+        if (!process.env.RAZORPAY_KEY_SECRET) {
+            return res.json({ success: false, message: "Razorpay keys not found" })
+        }
+
+        const expectedSignature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest("hex")
+
+        const expectedBuf = Buffer.from(expectedSignature, "utf8")
+        const receivedBuf = Buffer.from(razorpay_signature, "utf8")
+
+        if (
+            expectedBuf.length !== receivedBuf.length ||
+            !crypto.timingSafeEqual(expectedBuf, receivedBuf)
+        ) {
+            return res.json({ success: false, message: "Invalid payment signature" })
+        }
+
         const razorpayInstance = new razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
-        const { razorpay_order_id } = req.body
         const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id)
-        if (orderInfo.status === 'paid') {
-            await appointmentModel.findByIdAndUpdate(orderInfo.receipt, { payment: true })
-            res.json({ success: true, message: "Payment successfull" })
-        } else {
-            res.json({ success: false, message: "Payment failed" })
+
+        if (orderInfo.status !== "paid") {
+            return res.json({ success: false, message: "Payment failed" })
         }
+
+        const appointmentId = orderInfo.receipt
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        if (!appointmentData || appointmentData.cancelled) {
+            return res.json({ success: false, message: "Appointment cancelled or not found" })
+        }
+
+        if (String(appointmentData.userId) !== String(userId)) {
+            return res.json({ success: false, message: "Unauthorized action" })
+        }
+
+        if (appointmentData.payment) {
+            return res.json({ success: true, message: "Payment already verified" })
+        }
+
+        const updated = await appointmentModel.findOneAndUpdate(
+            { _id: appointmentId, payment: false, cancelled: false },
+            { payment: true },
+            { new: true }
+        )
+
+        if (!updated) {
+            const latest = await appointmentModel.findById(appointmentId)
+            if (latest?.payment) {
+                return res.json({ success: true, message: "Payment already verified" })
+            }
+            return res.json({ success: false, message: "Unable to update payment status" })
+        }
+
+        res.json({ success: true, message: "Payment successfull" })
 
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: error.message })
     }
 }
+
+
+
 export {
     registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment,
     cancelAppointment, paymentRazorpay, verifyRazorpay, verifyEmailOtp, resendEmailOtp,

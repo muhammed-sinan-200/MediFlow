@@ -14,6 +14,12 @@ const appointmentScheme = new mongoose.Schema({
     isComplete: { type: Boolean, default: false }
 })
 
+// Only one active booking per doctor/date/time; cancelled rows can be rebooked
+appointmentScheme.index(
+    { docId: 1, slotDate: 1, slotTime: 1 },
+    { unique: true, partialFilterExpression: { cancelled: false } }
+)
+
 const appointmentModel = mongoose.model('appointment', appointmentScheme)
 
 export default appointmentModel;

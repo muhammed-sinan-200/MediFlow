@@ -34,7 +34,7 @@ const loginDoctor = async (req, res) => {
         }
         const isMatch = await bcrypt.compare(password, doctor.password)
         if (isMatch) {
-            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET_KEY)
+            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' })
             res.json({ success: true, token })
         } else {
             res.json({ success: false, message: 'Invalid credentials' })
@@ -80,6 +80,13 @@ const appointmentCancel = async (req, res) => {
         const appointmentData = await appointmentModel.findById(appointmentId)
         if (appointmentData && appointmentData.docId === docId) {
             await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
+
+            const { slotDate, slotTime } = appointmentData
+            const doctorData = await doctorModel.findById(docId)
+            let slots_booked = doctorData.slots_booked
+            slots_booked[slotDate] = slots_booked[slotDate].filter(e => e !== slotTime)
+            await doctorModel.findByIdAndUpdate(docId, { slots_booked })
+
             return res.json({ success: true, message: "Appointment Cancelled" })
         } else {
             return res.json({ success: false, message: "Cancellation Failed" })

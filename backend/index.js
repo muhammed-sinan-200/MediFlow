@@ -27,7 +27,7 @@ app.use('/api/user',userRouter)
 app.use('/api/ai', aiRouter)
 
 app.get('/',(req,res)=>{
-    res.send("Working aan") 
+    res.send("API RUNNING") 
 })
 
 app.listen(port,()=>console.log(`Server running on ${port}`)
