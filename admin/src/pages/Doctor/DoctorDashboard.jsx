@@ -9,6 +9,7 @@ import {
   Activity,
   BadgeCheck,
 } from 'lucide-react'
+import PageLoader from '../../components/PageLoader'
 
 const DoctorDashboard = () => {
   const { dashData, getDashData, dToken } = useContext(DoctorContext)
@@ -71,8 +72,11 @@ const DoctorDashboard = () => {
     }
   }, [dashData])
 
+  if (!dashData) {
+    return <PageLoader label="Loading dashboard..." />
+  }
+
   return (
-    dashData && (
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -271,7 +275,6 @@ const DoctorDashboard = () => {
           </div>
         </div>
       </motion.div>
-    )
   )
 }
 

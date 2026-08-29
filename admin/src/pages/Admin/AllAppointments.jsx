@@ -6,13 +6,11 @@ import { motion } from 'framer-motion'
 import {
   Search,
   ArrowUpDown,
-  CalendarDays,
   CircleX,
   CircleCheckBig,
   Clock3,
-  UserRound,
-  Stethoscope,
 } from 'lucide-react'
+import ConfirmationModal from '../../components/ConfirmationModal'
 
 const AllAppointments = () => {
   const { aToken, appointments, getAllAppointments, cancelAppointment } =
@@ -22,6 +20,9 @@ const AllAppointments = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortOrder, setSortOrder] = useState('latest')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null)
+  const [actionLoading, setActionLoading] = useState(false)
 
   useEffect(() => {
     if (aToken) {
@@ -100,6 +101,30 @@ const AllAppointments = () => {
     setSearchTerm('')
     setStatusFilter('all')
     setSortOrder('latest')
+  }
+
+  const openCancelModal = (appointmentId) => {
+    setSelectedAppointmentId(appointmentId)
+    setConfirmOpen(true)
+  }
+
+  const closeConfirmModal = () => {
+    if (actionLoading) return
+    setConfirmOpen(false)
+    setSelectedAppointmentId(null)
+  }
+
+  const handleConfirmCancel = async () => {
+    if (!selectedAppointmentId || actionLoading) return
+
+    try {
+      setActionLoading(true)
+      await cancelAppointment(selectedAppointmentId)
+      setConfirmOpen(false)
+      setSelectedAppointmentId(null)
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   return (
@@ -265,7 +290,7 @@ const AllAppointments = () => {
                     <div className='flex justify-center'>
                       {!item.cancelled && !item.isComplete ? (
                         <button
-                          onClick={() => cancelAppointment(item._id)}
+                          onClick={() => openCancelModal(item._id)}
                           className='inline-flex items-center justify-center rounded border border-rose-200 bg-rose-50 p-2 transition hover:bg-rose-100'
                           title='Cancel appointment'
                         >
@@ -360,7 +385,7 @@ const AllAppointments = () => {
                         <div className='mt-1'>
                           {!item.cancelled && !item.isComplete ? (
                             <button
-                              onClick={() => cancelAppointment(item._id)}
+                              onClick={() => openCancelModal(item._id)}
                               className='inline-flex items-center gap-2 rounded border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 transition hover:bg-rose-100'
                             >
                               <img
@@ -394,6 +419,18 @@ const AllAppointments = () => {
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        open={confirmOpen}
+        title='Cancel appointment'
+        message='Are you sure you want to cancel this appointment? This action cannot be undone.'
+        confirmLabel='Cancel appointment'
+        cancelLabel='Keep appointment'
+        confirmVariant='danger'
+        loading={actionLoading}
+        onConfirm={handleConfirmCancel}
+        onCancel={closeConfirmModal}
+      />
     </motion.div>
   )
 }

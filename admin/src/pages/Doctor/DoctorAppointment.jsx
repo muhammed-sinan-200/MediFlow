@@ -11,9 +11,8 @@ import {
   Clock3,
   CalendarDays,
   Wallet,
-  UserRound,
-  BadgeCheck,
 } from 'lucide-react'
+import ConfirmationModal from '../../components/ConfirmationModal'
 
 const DoctorAppointment = () => {
   const {
@@ -29,6 +28,12 @@ const DoctorAppointment = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortOrder, setSortOrder] = useState('latest')
+  const [confirmState, setConfirmState] = useState({
+    open: false,
+    type: null,
+    appointmentId: null,
+  })
+  const [actionLoading, setActionLoading] = useState(false)
 
   useEffect(() => {
     if (dToken) {
@@ -106,6 +111,50 @@ const DoctorAppointment = () => {
     setStatusFilter('all')
     setSortOrder('latest')
   }
+
+  const openConfirmModal = (type, appointmentId) => {
+    setConfirmState({ open: true, type, appointmentId })
+  }
+
+  const closeConfirmModal = () => {
+    if (actionLoading) return
+    setConfirmState({ open: false, type: null, appointmentId: null })
+  }
+
+  const handleConfirmAction = async () => {
+    const { type, appointmentId } = confirmState
+    if (!type || !appointmentId || actionLoading) return
+
+    try {
+      setActionLoading(true)
+      if (type === 'cancel') {
+        await cancelAppointment(appointmentId)
+      } else if (type === 'complete') {
+        await completeAppointment(appointmentId)
+      }
+      setConfirmState({ open: false, type: null, appointmentId: null })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const confirmCopy =
+    confirmState.type === 'complete'
+      ? {
+          title: 'Complete appointment',
+          message: 'Mark this appointment as completed?',
+          confirmLabel: 'Mark completed',
+          cancelLabel: 'Keep pending',
+          confirmVariant: 'success',
+        }
+      : {
+          title: 'Cancel appointment',
+          message:
+            'Are you sure you want to cancel this appointment? This action cannot be undone.',
+          confirmLabel: 'Cancel appointment',
+          cancelLabel: 'Keep appointment',
+          confirmVariant: 'danger',
+        }
 
   return (
     <motion.div
@@ -280,7 +329,7 @@ const DoctorAppointment = () => {
                       {!item.cancelled && !item.isComplete ? (
                         <div className='flex items-center gap-2'>
                           <button
-                            onClick={() => cancelAppointment(item._id)}
+                            onClick={() => openConfirmModal('cancel', item._id)}
                             className='inline-flex items-center justify-center rounded border border-rose-200 bg-rose-50 p-2 transition hover:bg-rose-100'
                             title='Cancel appointment'
                           >
@@ -292,7 +341,7 @@ const DoctorAppointment = () => {
                           </button>
 
                           <button
-                            onClick={() => completeAppointment(item._id)}
+                            onClick={() => openConfirmModal('complete', item._id)}
                             className='inline-flex items-center justify-center rounded border border-emerald-200 bg-emerald-50 p-2 transition hover:bg-emerald-100'
                             title='Complete appointment'
                           >
@@ -368,7 +417,7 @@ const DoctorAppointment = () => {
                           {!item.cancelled && !item.isComplete ? (
                             <div className='flex flex-wrap items-center gap-2'>
                               <button
-                                onClick={() => cancelAppointment(item._id)}
+                                onClick={() => openConfirmModal('cancel', item._id)}
                                 className='inline-flex items-center gap-2 rounded border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 transition hover:bg-rose-100'
                               >
                                 <img
@@ -380,7 +429,7 @@ const DoctorAppointment = () => {
                               </button>
 
                               <button
-                                onClick={() => completeAppointment(item._id)}
+                                onClick={() => openConfirmModal('complete', item._id)}
                                 className='inline-flex items-center gap-2 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100'
                               >
                                 <img
@@ -415,6 +464,18 @@ const DoctorAppointment = () => {
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        open={confirmState.open}
+        title={confirmCopy.title}
+        message={confirmCopy.message}
+        confirmLabel={confirmCopy.confirmLabel}
+        cancelLabel={confirmCopy.cancelLabel}
+        confirmVariant={confirmCopy.confirmVariant}
+        loading={actionLoading}
+        onConfirm={handleConfirmAction}
+        onCancel={closeConfirmModal}
+      />
     </motion.div>
   )
 }

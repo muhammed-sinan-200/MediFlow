@@ -12,6 +12,16 @@ const Login = () => {
   const { setAToken, backendUrl } = useContext(AdminContext)
   const { setDToken } = useContext(DoctorContext)
 
+  const clearDoctorSession = () => {
+    sessionStorage.removeItem('dToken')
+    setDToken('')
+  }
+
+  const clearAdminSession = () => {
+    sessionStorage.removeItem('aToken')
+    setAToken('')
+  }
+
   const {
     register,
     handleSubmit,
@@ -41,6 +51,7 @@ const Login = () => {
         })
 
         if (data.success) {
+          clearDoctorSession()
           sessionStorage.setItem('aToken', data.token)
           setAToken(data.token)
         } else {
@@ -55,9 +66,9 @@ const Login = () => {
         })
 
         if (data.success) {
+          clearAdminSession()
           sessionStorage.setItem('dToken', data.token)
           setDToken(data.token)
-          console.log(data.token)
         } else {
           toast.error(data.message, {
             theme: 'dark',

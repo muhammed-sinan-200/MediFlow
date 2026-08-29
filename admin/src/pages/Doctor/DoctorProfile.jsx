@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { DoctorContext } from '../../context/DoctorContext'
-import { AppContext } from '../../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { motion, spring } from 'framer-motion'
+import { motion } from 'framer-motion'
+import PageLoader from '../../components/PageLoader'
 
 const DoctorProfile = () => {
   const { dToken, profileData, setProfileData, getProfileData, backendUrl } = useContext(DoctorContext)
@@ -38,7 +38,12 @@ const DoctorProfile = () => {
       getProfileData()
     }
   }, [dToken])
-  return profileData && (
+
+  if (!profileData) {
+    return <PageLoader label="Loading profile..." />
+  }
+
+  return (
     <motion.div initial={{ y: 80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}>
@@ -71,9 +76,9 @@ const DoctorProfile = () => {
           <div className='flex gap-2 py-2'>
             <p className='text-base font-medium text-neutral-700'>Address:</p>
             <p className='text-sm font-normal'>
-              {isEdit ? <input placeholder='address1'  className='px-1 max-w-52 bg-purple-200  mt-4  font-base border border-purple-400 outline-none rounded text-gray-600' type="number" onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line1: e.target.value } }))} value={profileData.address.line1} /> : profileData.address.line1}
+              {isEdit ? <input placeholder='address1'  className='px-1 max-w-52 bg-purple-200  mt-4  font-base border border-purple-400 outline-none rounded text-gray-600' type="text" onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line1: e.target.value } }))} value={profileData.address.line1} /> : profileData.address.line1}
               <br />
-              {isEdit ? <input placeholder='address2' className='px-1 max-w-52 bg-purple-200  mt-4  font-base border border-purple-400 outline-none rounded text-gray-600' type="number" onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line2: e.target.value } }))} value={profileData.address.line2} /> : profileData.address.line2}
+              {isEdit ? <input placeholder='address2' className='px-1 max-w-52 bg-purple-200  mt-4  font-base border border-purple-400 outline-none rounded text-gray-600' type="text" onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line2: e.target.value } }))} value={profileData.address.line2} /> : profileData.address.line2}
             </p>
 
           </div>

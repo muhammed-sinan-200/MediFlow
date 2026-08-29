@@ -27,9 +27,7 @@ const AddDoctor = () => {
     formState: { errors },
   } = useForm();
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleFormSubmit = async () => {
     try {
       if (!docImg) {
         return toast.error("Image not selected");
@@ -72,7 +70,7 @@ const AddDoctor = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || error.message || "Something went wrong");
     }
   };
 

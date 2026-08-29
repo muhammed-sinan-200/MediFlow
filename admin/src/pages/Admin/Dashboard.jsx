@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import PageLoader from "../../components/PageLoader";
 
 const Dashboard = () => {
   const { aToken, getDashData, dashData } = useContext(AdminContext);
@@ -52,7 +53,9 @@ const Dashboard = () => {
     return latest.slice(0, 3);
   }, [dashData]);
 
-  if (!dashData) return null;
+  if (!dashData) {
+    return <PageLoader label="Loading dashboard..." />;
+  }
 
   const summaryItems = [
     {
